@@ -18,11 +18,23 @@ namespace OfficialWeb.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        // 關於我們
+        public IActionResult About()
         {
             return View();
         }
 
+        // 產品介紹
+        public IActionResult Products()
+        {
+            return View();
+        }
+        // 聯絡我們 GET
+        [HttpGet]
+        public IActionResult Contact()
+        {
+            return View();
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

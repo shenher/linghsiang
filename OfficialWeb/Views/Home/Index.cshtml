@@ -1,8 +1,37 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "首頁";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row align-items-center py-5">
+    <div class="col-md-6 order-2 order-md-1">
+        <h1 class="display-5 bakery-font mb-4">拎香烘室<br /><span class="bakery-badge">LING HSIANG BAKERY</span></h1>
+        <p class="fs-5 mb-4">
+            我們用心烘焙每一份糕點，堅持選用最天然的食材，將幸福美味傳遞給每一位客人。歡迎光臨拎香烘室，與我們一起共享甜蜜時光！
+        </p>
+        <a asp-action="Products" class="btn btn-warning btn-lg rounded-pill px-4 text-white">立即選購</a>
+    </div>
+    <div class="col-md-6 order-1 order-md-2 text-center mb-4 mb-md-0">
+        <img src="~/img/bakery-hero.png" alt="拎香烘室" class="img-fluid rounded-circle shadow" style="max-width:340px;">
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <img src="~/images/cake1.png" alt="招牌麵包" style="height:60px;margin-bottom:1rem;">
+                <h5 class="card-title bakery-font">天然原料</h5>
+                <p class="card-text">選用新鮮天然食材，無添加多餘人工物，大人小孩都安心。</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <img src="~/images/cake2.png" alt="蛋糕" style="height:60px;margin-bottom:1rem;">
+                <h5 class="card-title bakery-font">手工烘焙</h5>
+                <p class="card-text">每一份糕點都由師傅手工製作，讓幸福細緻入味。</p>
+            </div>
+        </div>
+    </div>
 </div>
