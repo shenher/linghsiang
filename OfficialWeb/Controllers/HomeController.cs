@@ -18,18 +18,18 @@ namespace OfficialWeb.Controllers
             return View();
         }
 
-        // Ãö©ó§Ú­Ì
+        // é—œæ–¼æˆ‘å€‘
         public IActionResult About()
         {
             return View();
         }
 
-        // ²£«~¤¶²Ğ
+        // ç”¢å“ä»‹ç´¹
         public IActionResult Products()
         {
             return View();
         }
-        // Ápµ¸§Ú­Ì GET
+        // è¯çµ¡æˆ‘å€‘ GET
         [HttpGet]
         public IActionResult Contact()
         {

@@ -4,10 +4,10 @@ using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// === ³]©w HTTPS »P¾ÌÃÒ ===
-// °²³]§A§â¾ÌÃÒ©ñ¦b¡u±M®×®Ú¥Ø¿ı¡vªº "certs/mycert.pfx"
+// === è¨­å®š HTTPS èˆ‡æ†‘è­‰ ===
+// å‡è¨­ä½ æŠŠæ†‘è­‰æ”¾åœ¨ã€Œå°ˆæ¡ˆæ ¹ç›®éŒ„ã€çš„ "certs/mycert.pfx"
 var certPath = Path.Combine(AppContext.BaseDirectory, "certs", "cert.pfx");
-var certPassword = "Samyahoo123"; // ½Ğ´«¦¨§A¦Û¤vªº±K½X
+var certPassword = "Samyahoo123"; // è«‹æ›æˆä½ è‡ªå·±çš„å¯†ç¢¼
 
 builder.WebHost.ConfigureKestrel(options =>
 {
@@ -16,7 +16,7 @@ builder.WebHost.ConfigureKestrel(options =>
         listenOptions.UseHttps(certPath, certPassword);
     });
 
-    // ¦pªG»İ­n¦P®É¤ä´© HTTP (¨Ò¦p¥Î¨Ó¾ÉÂà¨ì HTTPS)¡A¥i¥H¥[³o­Ó¡G
+    // å¦‚æœéœ€è¦åŒæ™‚æ”¯æ´ HTTP (ä¾‹å¦‚ç”¨ä¾†å°è½‰åˆ° HTTPS)ï¼Œå¯ä»¥åŠ é€™å€‹ï¼š
     // options.Listen(IPAddress.Any, 80);
 });
 
@@ -31,7 +31,7 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    app.UseHsts(); // ±j¨î HTTPS
+    app.UseHsts(); // å¼·åˆ¶ HTTPS
 }
 
 app.UseHttpsRedirection();
@@ -41,7 +41,7 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-// ³]©w¹w³]¸ô¥Ñ
+// è¨­å®šé è¨­è·¯ç”±
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
