@@ -3,24 +3,21 @@ using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// === 設定 HTTPS 與憑證 ===
-// 憑證路徑放在專案根目錄的 "certs/cert.pfx"
-// 憑證密碼請設定在環境變數 CERT_PASSWORD 或 appsettings.json 的 CertificatePassword
-var certPath = Path.Combine(AppContext.BaseDirectory, "certs", "cert.pfx");
-var certPassword = builder.Configuration["CertificatePassword"]
-    ?? Environment.GetEnvironmentVariable("CERT_PASSWORD")
-    ?? throw new InvalidOperationException("Certificate password is not configured. Set 'CertificatePassword' in appsettings or CERT_PASSWORD environment variable.");
-
-builder.WebHost.ConfigureKestrel(options =>
+if (!builder.Environment.IsDevelopment())
 {
-    options.Listen(IPAddress.Any, 443, listenOptions =>
-    {
-        listenOptions.UseHttps(certPath, certPassword);
-    });
+    var certPath = Path.Combine(AppContext.BaseDirectory, "certs", "cert.pfx");
+    var certPassword = builder.Configuration["CertificatePassword"]
+        ?? Environment.GetEnvironmentVariable("CERT_PASSWORD")
+        ?? throw new InvalidOperationException("Certificate password is not configured. Set 'CertificatePassword' in appsettings or CERT_PASSWORD environment variable.");
 
-    // 如果需要同時支援 HTTP (用來導轉到 HTTPS)，可取消下行注解：
-    // options.Listen(IPAddress.Any, 80);
-});
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.Listen(IPAddress.Any, 443, listenOptions =>
+        {
+            listenOptions.UseHttps(certPath, certPassword);
+        });
+    });
+}
 
 // Add services to the container.
 builder.Services.AddControllersWithViews(options =>

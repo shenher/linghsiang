@@ -49,7 +49,7 @@ namespace OfficialWeb.Controllers
             }
 
             _logger.LogInformation("收到聯絡表單 — 主旨: {Subject}", Subject);
-
+            _logger.LogInformation("收到聯絡表單 — 姓名: {Name}, 電話: {Phone}, 電子郵件: {Email}, 留言內容: {Message}", Name, Phone, Email, Message);
             TempData["SuccessMessage"] = "感謝您的留言！我們將盡速與您聯繫。";
             return RedirectToAction(nameof(Contact));
         }
