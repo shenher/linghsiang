@@ -1,13 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.Kestrel.Https;
 using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // === 設定 HTTPS 與憑證 ===
-// 假設你把憑證放在「專案根目錄」的 "certs/mycert.pfx"
+// 憑證路徑放在專案根目錄的 "certs/cert.pfx"
+// 憑證密碼請設定在環境變數 CERT_PASSWORD 或 appsettings.json 的 CertificatePassword
 var certPath = Path.Combine(AppContext.BaseDirectory, "certs", "cert.pfx");
-var certPassword = "Samyahoo123"; // 請換成你自己的密碼
+var certPassword = builder.Configuration["CertificatePassword"]
+    ?? Environment.GetEnvironmentVariable("CERT_PASSWORD")
+    ?? throw new InvalidOperationException("Certificate password is not configured. Set 'CertificatePassword' in appsettings or CERT_PASSWORD environment variable.");
 
 builder.WebHost.ConfigureKestrel(options =>
 {
@@ -16,25 +18,37 @@ builder.WebHost.ConfigureKestrel(options =>
         listenOptions.UseHttps(certPath, certPassword);
     });
 
-    // 如果需要同時支援 HTTP (例如用來導轉到 HTTPS)，可以加這個：
+    // 如果需要同時支援 HTTP (用來導轉到 HTTPS)，可取消下行注解：
     // options.Listen(IPAddress.Any, 80);
 });
 
-builder.Services.AddControllersWithViews();
 // Add services to the container.
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
 });
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    app.UseHsts(); // 強制 HTTPS
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+
+// === 安全性 HTTP 標頭 ===
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+    context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
+    context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
+    context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    context.Response.Headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()";
+    await next();
+});
+
 app.UseStaticFiles();
 
 app.UseRouting();
