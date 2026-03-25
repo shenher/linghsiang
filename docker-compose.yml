@@ -1,0 +1,14 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: linghsiang-web
+    ports:
+      - "443:443"
+    volumes:
+      - ./certs:/app/certs
+    environment:
+      - CERT_PASSWORD=${CERT_PASSWORD}
+      - ASPNETCORE_ENVIRONMENT=Production
+    restart: unless-stopped
