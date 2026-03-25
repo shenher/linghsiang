@@ -1,3 +1,4 @@
+@model OfficialWeb.Models.ContactViewModel
 @{
     ViewData["Title"] = "聯絡我們";
 }
@@ -20,27 +21,29 @@
                 <form asp-controller="Home" asp-action="Contact" method="post">
                     @Html.AntiForgeryToken()
 
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" style="display:@(ViewData.ModelState.IsValid ? "none" : "block")"></div>
+
                     <div class="mb-3">
-                        <label for="contactName" class="form-label fw-semibold">姓名 <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="contactName" name="Name"
-                               placeholder="請輸入您的姓名" required maxlength="50" />
+                        <label asp-for="Name" class="form-label fw-semibold">姓名 <span class="text-danger">*</span></label>
+                        <input asp-for="Name" class="form-control" placeholder="請輸入您的姓名" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label for="contactPhone" class="form-label fw-semibold">聯絡電話</label>
-                        <input type="tel" class="form-control" id="contactPhone" name="Phone"
-                               placeholder="例：0912-345-678" maxlength="20" />
+                        <label asp-for="Phone" class="form-label fw-semibold">聯絡電話</label>
+                        <input asp-for="Phone" class="form-control" placeholder="例：0912-345-678" />
+                        <span asp-validation-for="Phone" class="text-danger small"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label for="contactEmail" class="form-label fw-semibold">電子郵件 <span class="text-danger">*</span></label>
-                        <input type="email" class="form-control" id="contactEmail" name="Email"
-                               placeholder="example@mail.com" required maxlength="100" />
+                        <label asp-for="Email" class="form-label fw-semibold">電子郵件 <span class="text-danger">*</span></label>
+                        <input asp-for="Email" class="form-control" placeholder="example@mail.com" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label for="contactSubject" class="form-label fw-semibold">主旨</label>
-                        <select class="form-select" id="contactSubject" name="Subject">
+                        <label asp-for="Subject" class="form-label fw-semibold">主旨</label>
+                        <select asp-for="Subject" class="form-select">
                             <option value="">-- 請選擇 --</option>
                             <option value="訂購詢問">訂購詢問</option>
                             <option value="客製化蛋糕">客製化蛋糕</option>
@@ -50,9 +53,9 @@
                     </div>
 
                     <div class="mb-4">
-                        <label for="contactMessage" class="form-label fw-semibold">留言內容 <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="contactMessage" name="Message"
-                                  rows="5" placeholder="請描述您的需求或問題…" required maxlength="1000"></textarea>
+                        <label asp-for="Message" class="form-label fw-semibold">留言內容 <span class="text-danger">*</span></label>
+                        <textarea asp-for="Message" class="form-control" rows="5" placeholder="請描述您的需求或問題…"></textarea>
+                        <span asp-validation-for="Message" class="text-danger small"></span>
                     </div>
 
                     <div class="d-grid">
@@ -69,3 +72,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

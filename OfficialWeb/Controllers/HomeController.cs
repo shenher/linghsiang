@@ -34,22 +34,21 @@ namespace OfficialWeb.Controllers
         [HttpGet]
         public IActionResult Contact()
         {
-            return View();
+            return View(new ContactViewModel());
         }
 
         // 聯絡我們 POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Contact(string Name, string Phone, string Email, string Subject, string Message)
+        public IActionResult Contact(ContactViewModel model)
         {
-            if (string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Message))
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError(string.Empty, "請填寫必填欄位（姓名、電子郵件、留言內容）。");
-                return View();
+                return View(model);
             }
 
-            _logger.LogInformation("收到聯絡表單 — 主旨: {Subject}", Subject);
-            _logger.LogInformation("收到聯絡表單 — 姓名: {Name}, 電話: {Phone}, 電子郵件: {Email}, 留言內容: {Message}", Name, Phone, Email, Message);
+            _logger.LogInformation("收到聯絡表單 — 主旨: {Subject}", model.Subject);
+            _logger.LogInformation("收到聯絡表單 — 姓名: {Name}, 電話: {Phone}, 電子郵件: {Email}, 留言內容: {Message}", model.Name, model.Phone, model.Email, model.Message);
             TempData["SuccessMessage"] = "感謝您的留言！我們將盡速與您聯繫。";
             return RedirectToAction(nameof(Contact));
         }
