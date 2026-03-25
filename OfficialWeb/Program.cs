@@ -6,9 +6,12 @@ var builder = WebApplication.CreateBuilder(args);
 if (!builder.Environment.IsDevelopment())
 {
     var certPath = Path.Combine(AppContext.BaseDirectory, "certs", "cert.pfx");
-    var certPassword = builder.Configuration["CertificatePassword"]
-        ?? Environment.GetEnvironmentVariable("CERT_PASSWORD")
-        ?? throw new InvalidOperationException("Certificate password is not configured. Set 'CertificatePassword' in appsettings or CERT_PASSWORD environment variable.");
+    var configPassword = builder.Configuration["CertificatePassword"];
+
+    var certPassword = !string.IsNullOrWhiteSpace(configPassword) ? configPassword
+        : Environment.GetEnvironmentVariable("CERT_PASSWORD")
+        ?? throw new InvalidOperationException(
+            "Certificate password is not configured. Set 'CertificatePassword' in appsettings or CERT_PASSWORD environment variable.");
 
     builder.WebHost.ConfigureKestrel(options =>
     {
