@@ -420,3 +420,4 @@ FodyWeavers.xsd
 *.config
 */certs
 *.DS_Store
+certs/
