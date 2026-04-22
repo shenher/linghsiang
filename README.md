@@ -126,7 +126,7 @@ dotnet user-secrets set "CertificatePassword" "你的憑證密碼"
 將 PFX 憑證放至：
 
 ```
-OfficialWeb/bin/Debug/net8.0/certs/cert.pfx
+bin/Debug/net8.0/certs/cert.pfx
 ```
 
 > `.gitignore` 已忽略 `*.pfx` 與 `*/certs` 目錄，憑證不會被提交至版本控制。
@@ -137,7 +137,12 @@ OfficialWeb/bin/Debug/net8.0/certs/cert.pfx
 dotnet run
 ```
 
-瀏覽器開啟 `https://localhost:443`
+瀏覽器開啟（開發環境）：
+
+- HTTP：`http://localhost:5227`
+- HTTPS：`https://localhost:7097`
+
+> 注意：Port 443 僅在正式環境（非 Development）由 Kestrel 直接監聽，開發時使用上述 launchSettings.json 預設埠號。
 
 ---
 
