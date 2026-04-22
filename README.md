@@ -51,27 +51,37 @@ OfficialWeb/
 ├── Controllers/
 │   └── HomeController.cs        # 首頁、關於、產品、聯絡 控制器
 ├── Models/
+│   ├── ContactViewModel.cs      # 聯絡表單驗證 ViewModel（Data Annotations）
 │   └── ErrorViewModel.cs
+├── Properties/
+│   └── launchSettings.json      # 開發環境啟動設定（HTTP/HTTPS 埠號）
 ├── Views/
 │   ├── Home/
 │   │   ├── Index.cshtml         # 首頁
 │   │   ├── About.cshtml         # 關於我們
 │   │   ├── Products.cshtml      # 產品介紹
 │   │   └── Contact.cshtml       # 聯絡我們
-│   └── Shared/
-│       ├── _Layout.cshtml       # 共用版型（導覽列 + 頁尾）
-│       ├── _Layout.cshtml.css   # 版型 Scoped 樣式（最小化）
-│       └── Error.cshtml         # 錯誤頁面
+│   ├── Shared/
+│   │   ├── _Layout.cshtml       # 共用版型（導覽列 + 頁尾）
+│   │   ├── _Layout.cshtml.css   # 版型 Scoped 樣式（最小化）
+│   │   ├── _ValidationScriptsPartial.cshtml  # 用戶端驗證腳本 Partial
+│   │   └── Error.cshtml         # 錯誤頁面
+│   ├── _ViewImports.cshtml      # 全域 using、Tag Helper 宣告
+│   └── _ViewStart.cshtml        # 預設 Layout 設定
 ├── wwwroot/
 │   ├── css/
 │   │   └── site.css             # 主題樣式（分節管理，見 CSS 架構）
 │   ├── js/
 │   │   └── site.js              # 自訂 JavaScript
-│   ├── images/                  # 產品圖片
+│   ├── lib/                     # 本機靜態函式庫（Bootstrap 5.3.2、jQuery、jquery-validation）
+│   ├── images/                  # 產品圖片（cake1.png、cake2.png）
 │   └── img/                     # Logo、Hero 圖片（需自行放置）
-├── Program.cs                   # 應用程式進入點、Kestrel 設定、安全標頭
 ├── appsettings.json             # 應用程式設定（含憑證密碼佔位符）
-└── OfficialWeb.csproj
+├── appsettings.Development.json # 開發環境覆蓋設定
+├── global.json                  # .NET SDK 版本鎖定（8.0.300）
+├── Program.cs                   # 應用程式進入點、Kestrel 設定、安全標頭
+├── OfficialWeb.csproj
+└── OfficialWeb.sln
 ```
 
 ---
@@ -169,7 +179,7 @@ dotnet run
 |---|---|
 | HTTPS 強制導向 | `app.UseHttpsRedirection()` |
 | HSTS | 非開發環境自動啟用 |
-| CSRF 防護 | 全域套用 `AutoValidateAntiforgeryTokenAttribute`，聯絡表單額外加上 `[ValidateAntiForgeryToken]` |
+| CSRF 防護 | 全域套用 `AutoValidateAntiforgeryTokenAttribute`，無需在個別 Action 額外標注 `[ValidateAntiForgeryToken]` |
 | CDN SRI 驗證 | Bootstrap CSS/JS 含 `integrity` 與 `crossorigin` 屬性 |
 | HTTP 安全標頭 | `X-Content-Type-Options`、`X-Frame-Options`、`X-XSS-Protection`、`Referrer-Policy`、`Permissions-Policy` |
 | 憑證密碼保護 | 透過環境變數或 User Secrets 注入，不寫死於程式碼 |
