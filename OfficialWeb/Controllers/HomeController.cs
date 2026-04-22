@@ -29,12 +29,30 @@ namespace OfficialWeb.Controllers
         {
             return View();
         }
+
         // 聯絡我們 GET
         [HttpGet]
         public IActionResult Contact()
         {
-            return View();
+            return View(new ContactViewModel());
         }
+
+        // 聯絡我們 POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Contact(ContactViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            _logger.LogInformation("收到聯絡表單 — 主旨: {Subject}", model.Subject);
+            _logger.LogInformation("收到聯絡表單 — 姓名: {Name}, 電話: {Phone}, 電子郵件: {Email}, 留言內容: {Message}", model.Name, model.Phone, model.Email, model.Message);
+            TempData["SuccessMessage"] = "感謝您的留言！我們將盡速與您聯繫。";
+            return RedirectToAction(nameof(Contact));
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

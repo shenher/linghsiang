@@ -1,0 +1,11 @@
+**/bin/
+**/obj/
+**/.vs/
+**/node_modules/
+**/*.pfx
+**/certs/
+.git
+.gitignore
+*.md
+docker-compose.yml
+.env

@@ -1,38 +1,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
 
+/* =========================================================
+   1. 全域 / 基礎樣式 (Global / Base)
+   ========================================================= */
 body {
     font-family: 'Noto Sans TC', sans-serif;
     background-color: #FAF6F0;
     color: #6A4E2B;
 }
 
+a {
+    color: #B88930;
+}
+
+a:hover {
+    color: #9B7B41;
+}
+
+/* =========================================================
+   2. 字型與標籤 (Typography & Badges)
+   ========================================================= */
 .bakery-font {
     letter-spacing: 0.1em;
     font-weight: bold;
-}
-
-.bg-bakery {
-    background: #FAECDB;
-}
-
-.text-bakery-footer {
-    color: #9B7B41 !important;
-}
-
-.bg-hero {
-    background: linear-gradient(90deg, #EFE1CB 40%, #F9F3E9 100%);
-    min-height: 70vh;
-}
-
-.navbar-light .navbar-nav .nav-link.active,
-.navbar-light .navbar-nav .nav-link {
-    color: #B88930;
-    font-weight: 600;
-}
-
-.navbar-brand img {
-    /* 假如有logo.svg可以這樣設圖片logo */
-    vertical-align: middle;
 }
 
 .bakery-badge {
@@ -43,16 +33,106 @@ body {
     font-size: 1.1rem;
 }
 
-/* 客製化icon/糕點磨砂圓角設計等有需要可再細調 */
-.card {
-    border-radius: 24px;
-    box-shadow: 0 4px 16px rgba(180, 137, 48, 0.06);
-    margin-bottom: 2rem;
+/* =========================================================
+   3. 導覽列 (Navbar)
+   ========================================================= */
+.bg-bakery {
+    background: #FAECDB;
 }
 
+.navbar-brand img {
+    vertical-align: middle;
+}
+
+.navbar-light .navbar-nav .nav-link,
+.navbar-light .navbar-nav .nav-link.active {
+    color: #B88930;
+    font-weight: 600;
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+    color: #9B7B41;
+}
+
+/* =========================================================
+   4. 主視覺區塊 (Hero Section)
+   ========================================================= */
+.bg-hero {
+    background: linear-gradient(90deg, #EFE1CB 40%, #F9F3E9 100%);
+    min-height: 70vh;
+}
+
+/* =========================================================
+   5. 卡片 (Cards)
+   ========================================================= */
+.card {
+    border-radius: 24px;
+    border: none;
+    box-shadow: 0 4px 16px rgba(180, 137, 48, 0.06);
+    margin-bottom: 2rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(180, 137, 48, 0.14);
+}
+
+/* =========================================================
+   6. 頁尾 (Footer)
+   ========================================================= */
+.text-bakery-footer {
+    color: #9B7B41 !important;
+}
+
+/* =========================================================
+   7. 產品頁 (Products Page)
+   ========================================================= */
+.product-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 16px 16px 0 0;
+}
+
+/* =========================================================
+   8. 聯絡表單 (Contact Form)
+   ========================================================= */
+.contact-form .form-control:focus,
+.contact-form .form-select:focus {
+    border-color: #B88930;
+    box-shadow: 0 0 0 0.2rem rgba(184, 137, 48, 0.25);
+}
+
+.contact-form .btn-bakery {
+    background-color: #B88930;
+    border-color: #B88930;
+    color: #fff;
+    border-radius: 30px;
+    padding: 0.5rem 2rem;
+    font-weight: 600;
+}
+
+.contact-form .btn-bakery:hover {
+    background-color: #9B7B41;
+    border-color: #9B7B41;
+    color: #fff;
+}
+
+/* =========================================================
+   9. 響應式調整 (Responsive Overrides)
+   ========================================================= */
 @media (max-width: 768px) {
     .bg-hero {
         padding-top: 2rem;
         min-height: 35vh;
+    }
+
+    .bakery-badge {
+        font-size: 0.95rem;
+    }
+
+    .product-img {
+        height: 160px;
     }
 }

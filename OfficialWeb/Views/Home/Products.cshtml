@@ -1,5 +1,80 @@
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @{
+    ViewData["Title"] = "產品介紹";
 }
+
+<div class="py-5">
+    <h2 class="bakery-font text-center mb-2">產品介紹</h2>
+    <p class="text-center mb-5">精選手工烘焙糕點，每一口都是幸福的滋味。</p>
+
+    <div class="row g-4">
+        <!-- 產品卡片 1 -->
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card h-100">
+                <img src="~/images/cake1.png" alt="天然奶油蛋糕" class="product-img" />
+                <div class="card-body">
+                    <h5 class="card-title bakery-font">天然奶油蛋糕</h5>
+                    <p class="card-text">採用無添加鮮奶油，層層疊出細膩綿密的口感，是慶生、送禮的首選。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 產品卡片 2 -->
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card h-100">
+                <img src="~/images/cake2.png" alt="手工麵包" class="product-img" />
+                <div class="card-body">
+                    <h5 class="card-title bakery-font">手工麵包</h5>
+                    <p class="card-text">每日新鮮出爐，外酥內軟，選用低溫發酵工法讓麥香更深層。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 產品卡片 3 -->
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card h-100">
+                <img src="~/images/cake1.png" alt="節慶禮盒" class="product-img" />
+                <div class="card-body">
+                    <h5 class="card-title bakery-font">節慶禮盒</h5>
+                    <p class="card-text">精心包裝的節日禮盒，多種口味組合，送禮自用兩相宜。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 產品卡片 4 -->
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card h-100">
+                <img src="~/images/cake2.png" alt="客製化蛋糕" class="product-img" />
+                <div class="card-body">
+                    <h5 class="card-title bakery-font">客製化蛋糕</h5>
+                    <p class="card-text">依您的需求量身打造，生日、婚禮、週年紀念皆可預訂，歡迎來電洽詢。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 產品卡片 5 -->
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card h-100">
+                <img src="~/images/cake1.png" alt="甜塔系列" class="product-img" />
+                <div class="card-body">
+                    <h5 class="card-title bakery-font">甜塔系列</h5>
+                    <p class="card-text">酥脆塔皮搭配當季水果與卡士達醬，口感豐富，視覺與味覺的雙重享受。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 產品卡片 6 -->
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card h-100">
+                <img src="~/images/cake2.png" alt="馬卡龍" class="product-img" />
+                <div class="card-body">
+                    <h5 class="card-title bakery-font">馬卡龍</h5>
+                    <p class="card-text">法式工法製作，多種顏色口味可選，外殼酥脆、內餡濃郁，少女心滿分。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <p class="fs-5">如需預訂或詢問更多產品資訊，歡迎<a asp-action="Contact">聯絡我們</a>。</p>
+    </div>
+</div>
