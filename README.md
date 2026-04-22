@@ -51,6 +51,7 @@ OfficialWeb/
 ├── Controllers/
 │   └── HomeController.cs        # 首頁、關於、產品、聯絡 控制器
 ├── Models/
+│   ├── ContactViewModel.cs      # 聯絡表單 ViewModel（含 Data Annotations 驗證）
 │   └── ErrorViewModel.cs
 ├── Views/
 │   ├── Home/
@@ -123,8 +124,26 @@ OfficialWeb/bin/Debug/net8.0/certs/cert.pfx
 
 ### 4. 執行專案
 
+**開發環境（HTTP）：**
+
 ```bash
-dotnet run
+dotnet run --project OfficialWeb/OfficialWeb.csproj --urls="http://localhost:5227"
+```
+
+瀏覽器開啟 `http://localhost:5227`
+
+**開發環境（HTTPS）：**
+
+```bash
+dotnet run --project OfficialWeb/OfficialWeb.csproj --urls="https://localhost:7097"
+```
+
+瀏覽器開啟 `https://localhost:7097`
+
+**正式環境（Docker）：**
+
+```bash
+docker-compose up --build
 ```
 
 瀏覽器開啟 `https://localhost:443`
