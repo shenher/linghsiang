@@ -39,8 +39,10 @@ namespace OfficialWeb.Tools
             var smtpPortRaw  = _configuration["EmailSettings:SmtpPort"];
             var smtpUser     = _configuration["EmailSettings:SmtpUser"];
             var smtpPassword = _configuration["EmailSettings:SmtpPassword"];
+            if (string.IsNullOrWhiteSpace(smtpPassword))
+                smtpPassword = Environment.GetEnvironmentVariable("SMTP_PASSWORD");
             var fromAddress  = _configuration["EmailSettings:FromAddress"];
-            var fromName     = _configuration["EmailSettings:FromDisplayName"] ?? "玲香烘培坊";
+            var fromName     = _configuration["EmailSettings:FromDisplayName"] ?? "拎香培室";
 
             // 缺少必要設定時記錄警告並略過寄信，避免阻斷使用者流程
             if (string.IsNullOrWhiteSpace(smtpHost) ||
@@ -74,7 +76,7 @@ namespace OfficialWeb.Tools
             using var mail = new MailMessage
             {
                 From       = new MailAddress(fromAddress, fromName),
-                Subject    = $"[玲香烘培坊] 新聯絡表單 — {model.Subject ?? "（無主旨）"}",
+                Subject    = $"[拎香培室] 新聯絡表單 — {model.Subject ?? "（無主旨）"}",
                 IsBodyHtml = false,
                 Body       = BuildEmailBody(model)
             };
