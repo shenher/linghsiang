@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-LING HSIANG BAKERY — a static brand image website with no database. Contact form submissions are logged via `ILogger` only; no backend data persistence.
+LING HSIANG BAKERY — a static brand image website with no database. Contact form submissions are logged via `ILogger` and trigger an SMTP email notification via `EmailService`; no backend data persistence.
 
 ## Commands
 
@@ -32,7 +32,8 @@ There are no automated tests in this project.
 ## Architecture
 
 - **Framework**: ASP.NET Core 8 MVC, .NET SDK 8.0.300 (`OfficialWeb/global.json`)
-- **Single controller**: `HomeController.cs` handles all pages — `Index`, `About`, `Products`, `Contact` (GET + POST)
+- **Single controller**: `HomeController.cs` handles all pages — `Index`, `About`, `Products`, `Contact` (GET + POST); injects `IEmailService` to send notification on form submit
+- **Services**: `Tools/EmailService.cs` — implements `IEmailService`; reads SMTP config from `appsettings.json` → `EmailSettings` (`SmtpHost`, `SmtpPort`, `SmtpUser`, `SmtpPassword`/`SMTP_PASSWORD` env var, `FromAddress`, `FromDisplayName`, `Recipients` semicolon-separated); registered in DI via `Program.cs`
 - **Models**: `ContactViewModel` (Data Annotations validation — Name, Phone, Email, Subject, Message), `ErrorViewModel`
 - **Views**: Razor (`.cshtml`) under `Views/Home/` and `Views/Shared/`; `_Layout.cshtml` is the master layout; `_ViewImports.cshtml` declares global usings and Tag Helpers; `_ValidationScriptsPartial.cshtml` renders client-side validation scripts
 - **Static assets**: `wwwroot/` — `css/site.css` contains all theme styles organized in 9 sections; `_Layout.cshtml.css` is layout-scoped; `wwwroot/lib/` contains local copies of Bootstrap 5.3.2, jQuery, and jquery-validation (used by validation partial; layout loads Bootstrap via CDN)
