@@ -28,7 +28,7 @@
 - 產品介紹（響應式卡片列表）
 - 聯絡我們（含 CSRF 防護表單）
 
-本網站定位為靜態形象官網，**不連接資料庫**，聯絡表單僅記錄伺服器 Log，如需寄送郵件可自行擴充 SMTP 服務。
+本網站定位為靜態形象官網，**不連接資料庫**，聯絡表單提交後會記錄伺服器 Log，並透過 SMTP 寄送 Email 通知（需設定 `EmailSettings`）。
 
 ---
 
@@ -50,6 +50,8 @@
 OfficialWeb/
 ├── Controllers/
 │   └── HomeController.cs        # 首頁、關於、產品、聯絡 控制器
+├── Tools/
+│   └── EmailService.cs          # IEmailService 介面與 SMTP 寄信實作
 ├── Models/
 │   ├── ContactViewModel.cs      # 聯絡表單驗證 ViewModel（Data Annotations）
 │   └── ErrorViewModel.cs
@@ -208,5 +210,5 @@ dotnet run
 - `~/img/logo.svg`、`~/img/bakery-hero.png`、`~/img/store-photo.jpg` 需自行放置於 `wwwroot/img/` 目錄。
 - `~/images/cake1.png`、`~/images/cake2.png` 已存在於 `wwwroot/images/`，可依需求替換。
 - 門市地址、電話、營業時間等資訊請修改 `Contact.cshtml` 中的對應內容。
-- 聯絡表單目前僅記錄 Server Log，如需 Email 通知功能，請在 `HomeController.Contact (POST)` 中整合 SMTP 服務。
+- 聯絡表單提交後會自動透過 SMTP 寄送通知信，請在 `appsettings.json` 的 `EmailSettings` 區段設定 SMTP 主機、帳號、收件者等；`SmtpPassword` 可改用環境變數 `SMTP_PASSWORD` 注入，避免密碼寫入設定檔。
 

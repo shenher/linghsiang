@@ -96,31 +96,7 @@ a:hover {
 }
 
 /* =========================================================
-   8. 聯絡表單 (Contact Form)
-   ========================================================= */
-.contact-form .form-control:focus,
-.contact-form .form-select:focus {
-    border-color: #B88930;
-    box-shadow: 0 0 0 0.2rem rgba(184, 137, 48, 0.25);
-}
-
-.contact-form .btn-bakery {
-    background-color: #B88930;
-    border-color: #B88930;
-    color: #fff;
-    border-radius: 30px;
-    padding: 0.5rem 2rem;
-    font-weight: 600;
-}
-
-.contact-form .btn-bakery:hover {
-    background-color: #9B7B41;
-    border-color: #9B7B41;
-    color: #fff;
-}
-
-/* =========================================================
-   9. 響應式調整 (Responsive Overrides)
+   8. 響應式調整 (Responsive Overrides)
    ========================================================= */
 @media (max-width: 768px) {
     .bg-hero {

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using OfficialWeb.Tools;
 using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +28,9 @@ builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
 });
+
+// 註冊電子郵件服務（Transient：每次注入都建立新實例，適合短暫的 SMTP 連線）
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 var app = builder.Build();
 

@@ -35,11 +35,6 @@
                                aria-current="@(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "page" : null)">首頁</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "About" ? "active" : "")"
-                               asp-controller="Home" asp-action="About"
-                               aria-current="@(ViewContext.RouteData.Values["action"]?.ToString() == "About" ? "page" : null)">關於我們</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Products" ? "active" : "")"
                                asp-controller="Home" asp-action="Products"
                                aria-current="@(ViewContext.RouteData.Values["action"]?.ToString() == "Products" ? "page" : null)">產品介紹</a>

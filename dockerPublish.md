@@ -13,11 +13,16 @@
    mkdir certs
    # 將 cert.pfx 複製到 certs/ 資料夾
    ```
-4. 在專案根目錄建立 `.env` 檔案，填入憑證密碼：
+4. 在專案根目錄建立 `.env` 檔案，填入所需密碼：
    ```
    CERT_PASSWORD=你的憑證密碼
+   SMTP_PASSWORD=Gmail 應用程式密碼（16 碼，去除空格）
    ```
    > ⚠️ `.env` 已加入 `.gitignore`，不會上傳到 Git。
+   >
+   > `SMTP_PASSWORD` 為 Gmail 應用程式密碼，非 Google 帳號密碼。
+   > 申請方式：Google 帳戶 → 安全性 → 兩步驟驗證 → 應用程式密碼。
+   > 若 `SMTP_PASSWORD` 未設定，聯絡表單仍可正常使用，但不會寄出通知信。
 
 ---
 
@@ -84,7 +89,7 @@ git clone https://github.com/shenher/linghsiang.git
 cd linghsiang
 mkdir certs
 # 複製 cert.pfx 到 certs/
-echo "CERT_PASSWORD=你的憑證密碼" > .env
+printf "CERT_PASSWORD=你的憑證密碼\nSMTP_PASSWORD=Gmail應用程式密碼\n" > .env
 docker compose up -d --build
 ```
 
@@ -106,7 +111,7 @@ docker compose up -d --build
 ```
 linghsiang/
 ├── certs/               ← 放憑證 cert.pfx（不上傳 Git）
-├── .env                 ← 放憑證密碼 CERT_PASSWORD=... （不上傳 Git）
+├── .env                 ← 放密碼：CERT_PASSWORD、SMTP_PASSWORD（不上傳 Git）
 ├── Dockerfile           ← Docker image 建置設定
 ├── docker-compose.yml   ← 容器啟動設定
 ├── .dockerignore        ← 排除不需進入 image 的檔案
