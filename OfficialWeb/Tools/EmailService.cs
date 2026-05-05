@@ -1,19 +1,19 @@
 using System.Net;
 using System.Net.Mail;
-using OfficialWeb.Models;
 
 namespace OfficialWeb.Tools
 {
     /// <summary>
-    /// 電子郵件服務介面，定義寄信行為供依賴注入使用。
+    /// 通用電子郵件服務介面，供需要透過 SMTP 寄信的功能使用。
     /// </summary>
     public interface IEmailService
     {
         /// <summary>
-        /// 傳送聯絡表單通知信給所有設定的收件者。
+        /// 寄送一封純文字郵件給 <c>EmailSettings:Recipients</c> 中設定的所有收件者。
         /// </summary>
-        /// <param name="model">已通過驗證的聯絡表單資料。</param>
-        Task SendContactNotificationAsync(ContactViewModel model);
+        /// <param name="subject">郵件主旨。</param>
+        /// <param name="body">郵件內文（純文字）。</param>
+        Task SendAsync(string subject, string body);
     }
 
     /// <summary>
@@ -32,7 +32,7 @@ namespace OfficialWeb.Tools
         }
 
         /// <inheritdoc/>
-        public async Task SendContactNotificationAsync(ContactViewModel model)
+        public async Task SendAsync(string subject, string body)
         {
             // 讀取 SMTP 設定
             var smtpHost     = _configuration["EmailSettings:SmtpHost"];
@@ -76,9 +76,9 @@ namespace OfficialWeb.Tools
             using var mail = new MailMessage
             {
                 From       = new MailAddress(fromAddress, fromName),
-                Subject    = $"[拎香培室] 新聯絡表單 — {model.Subject ?? "（無主旨）"}",
+                Subject    = $"[拎香培室] {subject}",
                 IsBodyHtml = false,
-                Body       = BuildEmailBody(model)
+                Body       = body
             };
 
             foreach (var recipient in recipients)
@@ -89,31 +89,8 @@ namespace OfficialWeb.Tools
             await smtpClient.SendMailAsync(mail);
 
             _logger.LogInformation(
-                "聯絡表單通知信已成功寄出，收件者：{Recipients}",
-                string.Join("; ", recipients));
-        }
-
-        /// <summary>
-        /// 組合純文字郵件內文，列出表單各欄位資料。
-        /// </summary>
-        private static string BuildEmailBody(ContactViewModel model)
-        {
-            return $"""
-                您好，
-
-                您的網站收到一筆新的聯絡表單，詳細資料如下：
-
-                姓名：{model.Name}
-                電話：{model.Phone ?? "（未填）"}
-                電子郵件：{model.Email}
-                主旨：{model.Subject ?? "（未填）"}
-
-                留言內容：
-                {model.Message}
-
-                ---
-                此封郵件由系統自動發送，請勿直接回覆。
-                """;
+                "郵件已成功寄出，主旨：{Subject}，收件者：{Recipients}",
+                subject, string.Join("; ", recipients));
         }
     }
 }
