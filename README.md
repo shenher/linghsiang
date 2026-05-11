@@ -24,11 +24,10 @@
 **拎香培室** 形象官網提供以下功能：
 
 - 首頁品牌形象展示
-- 關於我們（品牌故事）
 - 產品介紹（響應式卡片列表）
-- 聯絡我們（含 CSRF 防護表單）
+- 聯絡我們（門市資訊、Instagram / Facebook QR Code）
 
-本網站定位為靜態形象官網，**不連接資料庫**，聯絡表單提交後會記錄伺服器 Log，並透過 SMTP 寄送 Email 通知（需設定 `EmailSettings`）。
+本網站定位為靜態形象官網，**不連接資料庫**，亦無聯絡表單。
 
 ---
 
@@ -49,20 +48,18 @@
 ```
 OfficialWeb/
 ├── Controllers/
-│   └── HomeController.cs        # 首頁、關於、產品、聯絡 控制器
+│   └── HomeController.cs        # 首頁、產品、聯絡 控制器
 ├── Tools/
-│   └── EmailService.cs          # IEmailService 介面與 SMTP 寄信實作
+│   └── EmailService.cs          # IEmailService 介面與 SMTP 寄信實作（通用工具）
 ├── Models/
-│   ├── ContactViewModel.cs      # 聯絡表單驗證 ViewModel（Data Annotations）
 │   └── ErrorViewModel.cs
 ├── Properties/
 │   └── launchSettings.json      # 開發環境啟動設定（HTTP/HTTPS 埠號）
 ├── Views/
 │   ├── Home/
 │   │   ├── Index.cshtml         # 首頁
-│   │   ├── About.cshtml         # 關於我們
 │   │   ├── Products.cshtml      # 產品介紹
-│   │   └── Contact.cshtml       # 聯絡我們
+│   │   └── Contact.cshtml       # 聯絡我們（門市資訊 + 社群 QR Code）
 │   ├── Shared/
 │   │   ├── _Layout.cshtml       # 共用版型（導覽列 + 頁尾）
 │   │   ├── _Layout.cshtml.css   # 版型 Scoped 樣式（最小化）
@@ -173,8 +170,7 @@ dotnet run
 | 5. 卡片 | `.card`（含 hover 效果） |
 | 6. 頁尾 | `.text-bakery-footer` |
 | 7. 產品頁 | `.product-img` |
-| 8. 聯絡表單 | `.contact-form`、`.btn-bakery` |
-| 9. 響應式調整 | `@media` 查詢 |
+| 8. 響應式調整 | `@media` 查詢 |
 
 新增樣式時，請依頁面或功能歸入對應節次，保持一致性。
 
@@ -199,16 +195,16 @@ dotnet run
 | 路由 | 頁面 | 說明 |
 |---|---|---|
 | `/` | 首頁 | 品牌形象、特色介紹卡片 |
-| `/Home/About` | 關於我們 | 品牌故事、門市照片 |
 | `/Home/Products` | 產品介紹 | 響應式產品卡片列表 |
-| `/Home/Contact` | 聯絡我們 | 聯絡表單（含 CSRF 防護）、門市資訊 |
+| `/Home/Contact` | 聯絡我們 | 門市資訊、Instagram / Facebook QR Code |
 
 ---
 
 ## 注意事項
 
-- `~/img/logo.svg`、`~/img/bakery-hero.png`、`~/img/store-photo.jpg` 需自行放置於 `wwwroot/img/` 目錄。
+- `~/img/logo.svg`、`~/img/bakery-hero.png` 需自行放置於 `wwwroot/img/` 目錄。
 - `~/images/cake1.png`、`~/images/cake2.png` 已存在於 `wwwroot/images/`，可依需求替換。
+- `~/images/ig-qrcode.png`、`~/images/fb-qrcode.png` 需自行放置，否則聯絡頁 QR Code 圖片將無法顯示。
 - 門市地址、電話、營業時間等資訊請修改 `Contact.cshtml` 中的對應內容。
-- 聯絡表單提交後會自動透過 SMTP 寄送通知信，請在 `appsettings.json` 的 `EmailSettings` 區段設定 SMTP 主機、帳號、收件者等；`SmtpPassword` 可改用環境變數 `SMTP_PASSWORD` 注入，避免密碼寫入設定檔。
+- 若未來需要透過 SMTP 寄信，`EmailService` 已實作為通用工具，只需在 `appsettings.json` 的 `EmailSettings` 區段設定 SMTP 主機、帳號、收件者等；`SmtpPassword` 可改用環境變數 `SMTP_PASSWORD` 注入。
 
