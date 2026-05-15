@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-LING HSIANG BAKERY — a static brand image website with no database. Contact form submissions are logged via `ILogger` and trigger an SMTP email notification via `EmailService`; no backend data persistence.
+LING HSIANG BAKERY — a static brand image website with no database and no contact form. The Contact page shows store info and social media QR codes. `EmailService` exists as a generic SMTP utility but is not currently wired to any page action.
 
 ## Commands
 
@@ -32,9 +32,9 @@ There are no automated tests in this project.
 ## Architecture
 
 - **Framework**: ASP.NET Core 8 MVC, .NET SDK 8.0.300 (`OfficialWeb/global.json`)
-- **Single controller**: `HomeController.cs` handles all pages — `Index`, `About`, `Products`, `Contact` (GET + POST); injects `IEmailService` to send notification on form submit
-- **Services**: `Tools/EmailService.cs` — implements `IEmailService`; reads SMTP config from `appsettings.json` → `EmailSettings` (`SmtpHost`, `SmtpPort`, `SmtpUser`, `SmtpPassword`/`SMTP_PASSWORD` env var, `FromAddress`, `FromDisplayName`, `Recipients` semicolon-separated); registered in DI via `Program.cs`
-- **Models**: `ContactViewModel` (Data Annotations validation — Name, Phone, Email, Subject, Message), `ErrorViewModel`
+- **Single controller**: `HomeController.cs` handles all pages — `Index`, `Products`, `Contact` (GET only); no form submission logic
+- **Services**: `Tools/EmailService.cs` — implements `IEmailService` as a generic SMTP utility with `SendAsync(subject, body)`; reads SMTP config from `appsettings.json` → `EmailSettings` (`SmtpHost`, `SmtpPort`, `SmtpUser`, `SmtpPassword`/`SMTP_PASSWORD` env var, `FromAddress`, `FromDisplayName`, `Recipients` semicolon-separated); registered in DI via `Program.cs` but not currently injected into any controller
+- **Models**: `ErrorViewModel` only (`ContactViewModel` has been removed)
 - **Views**: Razor (`.cshtml`) under `Views/Home/` and `Views/Shared/`; `_Layout.cshtml` is the master layout; `_ViewImports.cshtml` declares global usings and Tag Helpers; `_ValidationScriptsPartial.cshtml` renders client-side validation scripts
 - **Static assets**: `wwwroot/` — `css/site.css` contains all theme styles organized in 9 sections; `_Layout.cshtml.css` is layout-scoped; `wwwroot/lib/` contains local copies of Bootstrap 5.3.2, jQuery, and jquery-validation (used by validation partial; layout loads Bootstrap via CDN)
 
