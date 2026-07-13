@@ -1,5 +1,8 @@
-# 拎香焙室官網 UI 改版 + 菜單主檔維護系統 — 詳細實作計畫 v3
+# 拎香焙室官網 UI 改版 + 菜單主檔維護系統 — 詳細實作計畫 v3.1
 
+> v3.1 變更摘要：新增「步驟 P 前置防呆」— `design-src/` 與 `Pic/`（含子目錄）不存在時自動建立；
+> `Menu.xlsx` 不存在時，須先讀完本計畫，再依「四、Excel 菜單設計」自行設計欄位並填入預設資料建立初始檔。
+>
 > v3 變更摘要：新增「步驟 0 設計稿解包」與「設計稿讀取規範（context 保護）」；
 > 步驟 7 改為逐頁循環；明確標註哪些工作交給 subagent；`design-raw/` 加入 .gitignore。
 > 其餘架構與 v2 相同。
@@ -147,6 +150,13 @@
 ### 初始資料（Seed）
 以設計稿內建菜單建立初始 Excel：蛋糕 8 款、餅乾 8 款、塔類 1 款、吐司 1 款（共 18 筆，含尺寸價格與標籤）；「抹茶紅豆生乳蛋糕」帶完整示範 Detail（成分 6 項、營養標示 8 列、備註 3 條，數值取自設計稿）。App 啟動時若 `Menu.xlsx` 不存在自動以 Seed 重建（防呆），同時把產好的初始檔 commit 進 repo。
 
+> **Menu.xlsx 不存在時的建檔規則（實作階段防呆）**：進入實作前若專案根目錄查無 `Menu.xlsx`，
+> 須**先完整讀取本計畫**，再依本節 5 個工作表結構自行思考並設計欄位與**預設資料**建立初始檔：
+> 各工作表欄位以上表定義為準（可視實作需要補充合理欄位，但不得刪減既有欄位）；
+> 預設資料先以符合手作烘焙品牌調性的合理假資料填入（蛋糕/餅乾/塔類/吐司共 18 筆、含尺寸價格與標籤，
+> 並讓其中一筆帶完整示範 Detail：成分、營養標示 8 列、備註）。
+> 待步驟 7 從設計稿抽出真實內建菜單後，再回填覆蓋這批預設資料。
+
 > Seed 菜單內容位於設計稿「產品頁」JSX 的內建資料，於步驟 7 實作 Products 頁時（該頁 JSX 已在 context 內）一併抽出，避免為了 Seed 再讀一次設計稿。
 
 ---
@@ -266,6 +276,14 @@ OfficialWeb/
 
 ## 七、實作步驟（依序執行）
 
+P. **前置防呆（進入步驟 0 前必先執行）**：
+   - **目錄檢查**：檢查 `design-src/` 與 `Pic/`（含 `Pic/home/`、`Pic/logo/`、`Pic/products/`、`Pic/qrcode/` 四個子目錄）是否存在，不存在則以 `mkdir -p` 建立，並印出實際建立了哪些目錄。
+   - **Menu.xlsx 檢查**：檢查專案根目錄是否有 `Menu.xlsx`；**不存在**則：
+     1. 先**完整讀取本計畫**（特別是「四、Excel 菜單設計」）；
+     2. 依 5 個工作表結構自行思考欄位設計與**預設資料**（規則見「四、初始資料（Seed）」的建檔規則）；
+     3. 以 ClosedXML（或步驟 4 的 `EnsureSeeded()` 邏輯）產出初始 `Menu.xlsx` 並 commit 進 repo。
+   - 本步驟為冪等操作：目錄與檔案已存在時直接略過、不覆蓋既有內容。
+
 0. **設計稿解包（腳本處理，禁止直接讀原檔）**：
    - 確認 `design-raw/` 內五份 HTML 存在，`ls -la` 記錄大小；**全程不以 Read 工具開啟這些檔案**。
    - 撰寫解包腳本（bash + node 或 python）：以 grep 定位 bundler payload → 解出各頁 JSX 原始碼與主題 CSS → base64 圖檔（Logo 4 個 PNG）直接解碼落地到 `Pic/logo/`，**不留在文字檔內**。
@@ -273,10 +291,10 @@ OfficialWeb/
    - 腳本對每個產物只輸出「檔名 + `wc -c` 大小 + 前 30 行預覽」到終端確認成功，不 cat 全文。
    - 【subagent】解包完成後，派一個 subagent 做產物健檢：逐檔回報大小、是否仍殘留 base64 大段內容、JSX 結構是否完整（有無截斷），回傳一份不超過 30 行的健檢摘要。若有任一檔案超過 200KB，於摘要中標註，後續該頁依「三、設計稿讀取規範」第 2、5 條處理。
    - 把 `design-raw/` 加入 `.gitignore`；`design-src/` commit 進 repo。此後 `design-raw/` 在本任務中不再被讀取。
-1. **素材落地**：確認 `Pic/logo/` 已有步驟 0 解碼的 Logo；下載 Hero 圖 → `Pic/home/hero.jpg`（失敗用現有 cake1.png）；建立 `Pic/` 其餘目錄結構（home / products / qrcode）
+1. **素材落地**：確認 `Pic/logo/` 已有步驟 0 解碼的 Logo；下載 Hero 圖 → `Pic/home/hero.jpg`（失敗用現有 cake1.png）；`Pic/` 目錄結構（home / products / qrcode）已由步驟 P 建立，此處僅確認完整
 2. **csproj**：加 ClosedXML 套件；`Pic/**`、`Menu.xlsx` 設 `CopyToOutputDirectory=PreserveNewest`（Docker 發佈可用）
 3. **Models**：Menu 資料模型 + 各 ViewModel（DataAnnotations 驗證：必填、數值範圍）
-4. **MenuExcelService**：ClosedXML 讀寫 + lock + `EnsureSeeded()`（產出含 18 筆初始產品的 `Menu.xlsx` 並 commit；Seed 資料先以佔位值建立，步驟 7 實作 Products 頁抽出設計稿內建菜單後回填）
+4. **MenuExcelService**：ClosedXML 讀寫 + lock + `EnsureSeeded()`（產出含 18 筆初始產品的 `Menu.xlsx` 並 commit；Seed 資料先以佔位值建立，步驟 7 實作 Products 頁抽出設計稿內建菜單後回填）。若步驟 P 已建立初始 `Menu.xlsx`，本步驟改為將該欄位設計與預設資料**收斂進 `EnsureSeeded()` 程式碼**（確保執行期防呆與初始檔一致），不重複建檔
 5. **PicController**：四個圖片 GET Action + 快取/白名單
 6. **_Layout 改寫 + site.css 全面重寫**：
    - 【subagent】實作前先派一個 subagent 做「共用元件分析」：讀取 `design-src/` 五頁 JSX，比對並回傳一份共用元件規格摘要（導覽列兩種型態的結構與 class、頁尾結構、共用按鈕/卡片樣式、`theme.css` 中全站級樣式清單），摘要控制在 60 行以內，不得貼回 JSX 原文。
