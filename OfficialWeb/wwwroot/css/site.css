@@ -620,6 +620,152 @@ button { cursor: pointer; }
   .product-card:hover .product-card-more { opacity: 0; }
 }
 
+/* ── 8. 產品詳細頁 ─────────────────────────────────────── */
+.detail-page { padding: 40px 0 96px; }
+
+.detail-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 28px;
+  text-decoration: none;
+}
+.detail-back:hover { color: var(--fg); }
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: start;
+}
+
+.detail-left { position: sticky; top: 96px; }
+
+.detail-img {
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.detail-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.detail-img .ph-label { display: none; position: absolute; }
+.detail-img.is-placeholder {
+  background-color: var(--ph-bg);
+  background-image: repeating-linear-gradient(45deg, transparent 0, transparent 10px, rgba(0, 0, 0, 0.04) 10px, rgba(0, 0, 0, 0.04) 11px);
+}
+.detail-img.is-placeholder img { display: none; }
+.detail-img.is-placeholder .ph-label { display: inline-flex; }
+
+.detail-tag {
+  display: inline-block;
+  margin-top: 16px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.detail-title { font-weight: 500; font-size: 44px; line-height: 1.18; margin: 0; color: var(--fg); }
+.detail-blurb { font-size: 16px; line-height: 1.9; color: var(--muted); margin: 18px 0 0; }
+
+.detail-section { margin-top: 34px; }
+
+.detail-sec-label {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
+}
+
+.detail-sizes { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+
+.detail-size {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 22px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  text-align: left;
+  transition: all 0.2s;
+  width: 100%;
+}
+.detail-size.active { border: 1.5px solid var(--accent); background: var(--accent-soft); }
+.detail-size-name { display: flex; align-items: baseline; gap: 12px; }
+.detail-size-name .label { font-size: 19px; font-weight: 500; color: var(--fg); }
+.detail-size-name .serve { font-size: 13px; color: var(--muted); }
+.detail-size-price { font-size: 17px; font-weight: 700; color: var(--accent); }
+
+.detail-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.detail-chip {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 13.5px;
+  color: var(--fg);
+}
+.detail-allergen { font-size: 12.5px; line-height: 1.7; color: var(--muted); margin: 14px 0 0; }
+
+/* 營養標示表（台灣食品標示格式：每份 / 每 100 公克） */
+.nutrition-table {
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.nutrition-serving { padding: 14px 14px 12px; border-bottom: 2px solid var(--fg); }
+.nutrition-serving .nrow { display: flex; justify-content: space-between; font-size: 14px; color: var(--fg); }
+.nutrition-serving .nrow + .nrow { margin-top: 6px; }
+.nutrition-serving .val { color: var(--muted); }
+
+.nutrition-table table { width: 100%; border-collapse: collapse; }
+.nutrition-table th, .nutrition-table td { padding: 9px 14px; font-size: 14px; color: var(--fg); text-align: left; }
+.nutrition-table thead tr { border-bottom: 1px solid var(--line); }
+.nutrition-table th.num, .nutrition-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.nutrition-table td.num { color: var(--muted); }
+.nutrition-table th { font-weight: 600; }
+.nutrition-table tbody tr { border-bottom: 1px solid var(--line); }
+.nutrition-table tbody tr:last-child { border-bottom: none; }
+.nutrition-table tbody td:first-child { font-weight: 500; }
+.nutrition-table tbody td.indent { padding-left: 30px; color: var(--muted); font-weight: 400; }
+
+.detail-notes {
+  list-style: none;
+  padding: 0;
+  margin: 26px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.detail-notes li { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--muted); }
+.detail-notes svg { flex-shrink: 0; }
+
+.detail-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
+.detail-back-btn { background: var(--bg); }
+
+@media (max-width: 759.98px) {
+  .detail-page { padding: 24px 0 56px; }
+  .detail-back { margin-bottom: 20px; }
+  .detail-grid { grid-template-columns: 1fr; gap: 28px; }
+  .detail-left { position: static; }
+  .detail-title { font-size: 32px; }
+  .detail-blurb { font-size: 15px; }
+  .detail-size { padding: 14px 18px; }
+}
+
 /* ── RWD：共用（<760px） ───────────────────────────────── */
 @media (max-width: 759.98px) {
   .wrap-1100, .wrap-1180 { padding-left: 24px; padding-right: 24px; }

@@ -1,0 +1,153 @@
+@model ProductDetailViewModel
+@{
+    ViewData["Title"] = "產品詳細";
+    // 台灣營養標示慣例：飽和脂肪、反式脂肪、糖 為縮排子項目
+    var indentItems = new HashSet<string> { "飽和脂肪", "反式脂肪", "糖" };
+    string FormatAmount(decimal? value, string unit)
+        => value is null ? "—" : $"{value.Value:0.#####} {unit}".Trim();
+}
+
+<section class="detail-page">
+    <div class="wrap-1180">
+        <a class="detail-back" asp-controller="Home" asp-action="Products">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="transform: rotate(180deg);"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            返回產品菜單
+        </a>
+
+        <div class="detail-grid">
+            @* 左：產品圖片（桌機 sticky） *@
+            <div class="detail-left">
+                <div class="detail-img">
+                    <img src="/Pic/Product/@Model.Main.Id" alt="@Model.Main.Name"
+                         onerror="this.closest('.detail-img').classList.add('is-placeholder');" />
+                    <span class="ph-label">PRODUCT PHOTO</span>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.Main.Tag))
+                {
+                    <span class="detail-tag">@Model.Main.Tag</span>
+                }
+            </div>
+
+            @* 右：詳細資料 *@
+            <div>
+                <div class="sec-label">— @Model.Main.Category</div>
+                <h1 class="detail-title">@Model.Main.Name</h1>
+                @if (!string.IsNullOrEmpty(Model.Main.Description))
+                {
+                    <p class="detail-blurb">@Model.Main.Description</p>
+                }
+
+                @if (Model.Sizes.Count > 0)
+                {
+                    <div class="detail-section">
+                        <div class="detail-sec-label">尺寸與價格</div>
+                        <div class="detail-sizes">
+                            @for (var i = 0; i < Model.Sizes.Count; i++)
+                            {
+                                var s = Model.Sizes[i];
+                                var parts = s.SizeName.Split('（', '(');
+                                var label = parts[0].Trim();
+                                var serve = parts.Length > 1 ? parts[1].TrimEnd('）', ')') : null;
+                                <button type="button" class="detail-size @(i == 0 ? "active" : "")">
+                                    <span class="detail-size-name">
+                                        <span class="label">@label</span>
+                                        @if (serve is not null)
+                                        {
+                                            <span class="serve">@serve</span>
+                                        }
+                                    </span>
+                                    <span class="detail-size-price">NT$ @s.Price.ToString("N0")</span>
+                                </button>
+                            }
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Ingredients.Count > 0)
+                {
+                    <div class="detail-section">
+                        <div class="detail-sec-label">成分</div>
+                        <div class="detail-chips">
+                            @foreach (var g in Model.Ingredients)
+                            {
+                                <span class="detail-chip">@g.Name</span>
+                            }
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.Main.AllergenNote))
+                        {
+                            <p class="detail-allergen">@Model.Main.AllergenNote</p>
+                        }
+                    </div>
+                }
+
+                @if (Model.Nutrition.Count > 0 || Model.Main.ServingGrams is not null)
+                {
+                    <div class="detail-section">
+                        <div class="detail-sec-label">營養標示</div>
+                        <div class="nutrition-table">
+                            <div class="nutrition-serving">
+                                <div class="nrow"><span>每一份量</span><span class="val">@(Model.Main.ServingGrams is null ? "—" : $"{Model.Main.ServingGrams.Value:0.#####} 公克")</span></div>
+                                <div class="nrow"><span>本包裝含</span><span class="val">@(Model.Main.ServingsPerPack is null ? "—" : $"約 {Model.Main.ServingsPerPack.Value:0.#####} 份")</span></div>
+                            </div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th class="num">每份</th>
+                                        <th class="num">每 100 公克</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var row in Model.Nutrition)
+                                    {
+                                        <tr>
+                                            <td class="@(indentItems.Contains(row.Item) ? "indent" : "")">@row.Item</td>
+                                            <td class="num">@FormatAmount(row.PerServing, row.Unit)</td>
+                                            <td class="num">@FormatAmount(row.Per100g, row.Unit)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Notes.Count > 0)
+                {
+                    <ul class="detail-notes">
+                        @foreach (var note in Model.Notes)
+                        {
+                            <li>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-9 7-14 15-14 0 9-5 15-14 15-1 0-1 0-1-1z" /><path d="M5 19c4-4 7-6 11-7" /></svg>
+                                @note.Content
+                            </li>
+                        }
+                    </ul>
+                }
+
+                <div class="detail-ctas">
+                    <a class="btn-line" href="https://line.me/R/ti/p/@@linghsiang" target="_blank" rel="noopener">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 4 3.6 7.3 8.5 7.9.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.5s5.7-3.4 7.7-5.8C21.3 14.4 22 12.8 22 11c0-4.4-4.5-8-10-8zM8 13.4H6c-.2 0-.3-.1-.3-.3v-4c0-.2.1-.3.3-.3s.3.1.3.3v3.7H8c.2 0 .3.1.3.3s-.1.3-.3.3zm1.4-.3c0 .2-.1.3-.3.3s-.3-.1-.3-.3v-4c0-.2.1-.3.3-.3s.3.1.3.3v4zm4.5 0c0 .1-.1.3-.2.3h-.4l-2-2.7v2.4c0 .2-.1.3-.3.3s-.3-.1-.3-.3v-4c0-.1.1-.3.2-.3h.4l2 2.7V9.1c0-.2.1-.3.3-.3s.3.1.3.3v4zm3.1-2.3c.2 0 .3.1.3.3s-.1.3-.3.3h-1.6v1.1H17c.2 0 .3.1.3.3s-.1.3-.3.3h-1.9c-.2 0-.3-.1-.3-.3V9.1c0-.2.1-.3.3-.3H17c.2 0 .3.1.3.3s-.1.3-.3.3h-1.6v1.1H17z"/></svg>
+                        LINE 詢問下單
+                    </a>
+                    <a class="btn-ghost detail-back-btn" asp-controller="Home" asp-action="Products">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="transform: rotate(180deg);"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                        回產品頁
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // 尺寸選項切換（僅視覺選取，實際下單經由 LINE）
+        document.querySelectorAll('.detail-size').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.detail-size').forEach(function (b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+            });
+        });
+    </script>
+}
