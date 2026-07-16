@@ -1,0 +1,24 @@
+@model HomeImageViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "首頁圖片維護";
+}
+
+<h1 class="admin-h1">首頁圖片維護</h1>
+<p class="admin-sub">目前首頁 Hero 背景預覽；上傳新圖後立即取代（jpg / png / webp，5MB 以內）。</p>
+
+<div class="admin-panel">
+    <div class="admin-hero-preview">
+        <img src="/Pic/Hero?t=@DateTime.Now.Ticks" alt="目前首頁背景"
+             onerror="this.replaceWith(Object.assign(document.createElement('div'), { className: 'admin-hero-missing', textContent: '目前沒有首頁圖片（前台將無 Hero 背景）' }));" />
+    </div>
+
+    <form asp-controller="Admin" asp-action="UploadHomeImage" method="post" enctype="multipart/form-data" class="admin-upload-form">
+        <div class="mb-3">
+            <label asp-for="Image" class="form-label"></label>
+            <input asp-for="Image" type="file" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+            <span asp-validation-for="Image" class="text-danger small"></span>
+        </div>
+        <button type="submit" class="btn-accent">上傳取代</button>
+    </form>
+</div>

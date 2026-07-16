@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using OfficialWeb.Models.Settings;
 using OfficialWeb.Services;
@@ -37,8 +38,23 @@ builder.Services.AddTransient<IEmailService, EmailService>();
 // 全站站台設定（字體等，Options Pattern）
 builder.Services.Configure<SiteSettings>(builder.Configuration.GetSection("SiteSettings"));
 
+// 後台設定（登入密碼；環境變數 ADMIN_PASSWORD 可覆蓋，見 AdminController）
+builder.Services.Configure<AdminSettings>(builder.Configuration.GetSection("AdminSettings"));
+
 // 菜單主檔服務（Singleton：內部以 lock 序列化 Menu.xlsx 讀寫）
 builder.Services.AddSingleton<IMenuService, MenuExcelService>();
+
+// 後台 Cookie 驗證（簡單密碼登入）
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Admin/Login";
+        options.AccessDeniedPath = "/Admin/Login";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+    });
 
 var app = builder.Build();
 
@@ -68,6 +84,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 // 設定預設路由

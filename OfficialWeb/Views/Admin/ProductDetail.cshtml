@@ -1,0 +1,201 @@
+@model AdminProductDetailEditViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = $"產品 Detail 維護 · {Model.Name}";
+}
+
+<div class="admin-head-row">
+    <div>
+        <h1 class="admin-h1">產品 Detail 維護</h1>
+        <p class="admin-sub">#@Model.Id · 儲存時整批寫回 Menu.xlsx（主檔基本欄位與 Main 列表同源）。</p>
+    </div>
+    <a class="btn btn-outline-secondary" asp-controller="Admin" asp-action="Products">← 回產品列表</a>
+</div>
+
+<form asp-controller="Admin" asp-action="SaveProductDetail" method="post" enctype="multipart/form-data" id="detailForm">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+    @* ── 主檔基本欄位 ── *@
+    <div class="admin-panel">
+        <h2 class="admin-h2">主檔基本欄位</h2>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label asp-for="Name" class="form-label">產品名 <span class="text-danger">*</span></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="Category" class="form-label">產品類別 <span class="text-danger">*</span></label>
+                <input asp-for="Category" class="form-control" />
+                <span asp-validation-for="Category" class="text-danger small"></span>
+                <div class="form-text">改了類別，前台分類 tab 會跟著變動。</div>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="Tag" class="form-label">產品標籤</label>
+                <input asp-for="Tag" class="form-control" placeholder="招牌 / 季節 / 熱賣（可空）" />
+                <span asp-validation-for="Tag" class="text-danger small"></span>
+            </div>
+            <div class="col-md-2 d-flex align-items-end gap-3 pb-1">
+                <div class="form-check">
+                    <input asp-for="CanDeliver" class="form-check-input" />
+                    <label asp-for="CanDeliver" class="form-check-label">可宅配</label>
+                </div>
+                <div class="form-check">
+                    <input asp-for="CanPickup" class="form-check-input" />
+                    <label asp-for="CanPickup" class="form-check-label">可店取</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* ── 尺寸與價格 ── *@
+    <div class="admin-panel">
+        <h2 class="admin-h2">尺寸與價格</h2>
+        <div id="sizeRows" class="admin-rows">
+            @for (var i = 0; i < Model.Sizes.Count; i++)
+            {
+                <div class="admin-row" data-row>
+                    <input name="Sizes[@i].SizeName" value="@Model.Sizes[i].SizeName" class="form-control" placeholder="尺寸名稱，例：6 吋（4–6 人）" required />
+                    <input name="Sizes[@i].Price" value="@Model.Sizes[i].Price.ToString("0.##")" class="form-control admin-num" type="number" step="0.01" min="0" placeholder="價格" required />
+                    <button type="button" class="btn btn-sm btn-outline-danger js-remove-row">刪除</button>
+                </div>
+            }
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-secondary mt-2 js-add-row" data-target="sizeRows" data-template="sizeTemplate">＋ 新增尺寸</button>
+    </div>
+
+    @* ── 成分 ── *@
+    <div class="admin-panel">
+        <h2 class="admin-h2">成分</h2>
+        <div id="ingredientRows" class="admin-rows">
+            @for (var i = 0; i < Model.Ingredients.Count; i++)
+            {
+                <div class="admin-row" data-row>
+                    <input name="Ingredients[@i].Name" value="@Model.Ingredients[i].Name" class="form-control" placeholder="成分名稱" required />
+                    <button type="button" class="btn btn-sm btn-outline-danger js-remove-row">刪除</button>
+                </div>
+            }
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-secondary mt-2 js-add-row" data-target="ingredientRows" data-template="ingredientTemplate">＋ 新增成分</button>
+    </div>
+
+    @* ── 營養標示 ── *@
+    <div class="admin-panel">
+        <h2 class="admin-h2">營養標示</h2>
+        <div class="row g-3 mb-3">
+            <div class="col-md-3">
+                <label asp-for="ServingGrams" class="form-label">每一份量（公克）</label>
+                <input asp-for="ServingGrams" class="form-control" type="number" step="0.01" min="0" />
+                <span asp-validation-for="ServingGrams" class="text-danger small"></span>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="ServingsPerPack" class="form-label">本包裝含（份，可小數）</label>
+                <input asp-for="ServingsPerPack" class="form-control" type="number" step="0.1" min="0" />
+                <span asp-validation-for="ServingsPerPack" class="text-danger small"></span>
+            </div>
+        </div>
+        <div class="admin-nutrition-head">
+            <span>營養項目</span><span>單位</span><span>每份含量</span><span>每100克含量</span><span></span>
+        </div>
+        <div id="nutritionRows" class="admin-rows">
+            @for (var i = 0; i < Model.Nutrition.Count; i++)
+            {
+                <div class="admin-row admin-row-nutrition" data-row>
+                    <input name="Nutrition[@i].Item" value="@Model.Nutrition[i].Item" class="form-control" placeholder="例：熱量" required />
+                    <input name="Nutrition[@i].Unit" value="@Model.Nutrition[i].Unit" class="form-control" placeholder="例：大卡" />
+                    <input name="Nutrition[@i].PerServing" value="@(Model.Nutrition[i].PerServing?.ToString("0.#####"))" class="form-control" type="number" step="0.01" min="0" />
+                    <input name="Nutrition[@i].Per100g" value="@(Model.Nutrition[i].Per100g?.ToString("0.#####"))" class="form-control" type="number" step="0.01" min="0" />
+                    <button type="button" class="btn btn-sm btn-outline-danger js-remove-row">刪除</button>
+                </div>
+            }
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-secondary mt-2 js-add-row" data-target="nutritionRows" data-template="nutritionTemplate">＋ 新增營養列</button>
+    </div>
+
+    @* ── 備註 ── *@
+    <div class="admin-panel">
+        <h2 class="admin-h2">備註</h2>
+        <div id="noteRows" class="admin-rows">
+            @for (var i = 0; i < Model.Notes.Count; i++)
+            {
+                <div class="admin-row" data-row>
+                    <input name="Notes[@i].Content" value="@Model.Notes[i].Content" class="form-control" placeholder="備註內容，例：全素・無蛋無奶" required />
+                    <button type="button" class="btn btn-sm btn-outline-danger js-remove-row">刪除</button>
+                </div>
+            }
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-secondary mt-2 js-add-row" data-target="noteRows" data-template="noteTemplate">＋ 新增備註</button>
+    </div>
+
+    @* ── 詳細頁文案 ── *@
+    <div class="admin-panel">
+        <h2 class="admin-h2">詳細頁文案</h2>
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label">產品描述</label>
+            <textarea asp-for="Description" class="form-control" rows="3" placeholder="詳細頁開頭介紹文（可空）"></textarea>
+        </div>
+        <div class="mb-0">
+            <label asp-for="AllergenNote" class="form-label">過敏原提示</label>
+            <textarea asp-for="AllergenNote" class="form-control" rows="2" placeholder="詳細頁成分區下方小字（可空）"></textarea>
+        </div>
+    </div>
+
+    @* ── 產品圖片 ── *@
+    <div class="admin-panel">
+        <h2 class="admin-h2">產品圖片</h2>
+        @if (Model.HasImage)
+        {
+            <div class="admin-product-preview">
+                <img src="/Pic/Product/@Model.Id?t=@DateTime.Now.Ticks" alt="目前產品圖" />
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">目前沒有產品圖（前台顯示佔位圖）。</p>
+        }
+        <div class="mb-0">
+            <label asp-for="Image" class="form-label">上傳新圖（jpg / png / webp，5MB 以內；上傳後取代舊圖）</label>
+            <input asp-for="Image" type="file" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+            <span asp-validation-for="Image" class="text-danger small"></span>
+        </div>
+    </div>
+
+    <div class="admin-save-bar">
+        <button type="submit" class="btn-accent">儲存</button>
+    </div>
+</form>
+
+@* 動態列範本 *@
+<template id="sizeTemplate">
+    <div class="admin-row" data-row>
+        <input name="Sizes[__i__].SizeName" class="form-control" placeholder="尺寸名稱，例：6 吋（4–6 人）" required />
+        <input name="Sizes[__i__].Price" class="form-control admin-num" type="number" step="0.01" min="0" placeholder="價格" required />
+        <button type="button" class="btn btn-sm btn-outline-danger js-remove-row">刪除</button>
+    </div>
+</template>
+<template id="ingredientTemplate">
+    <div class="admin-row" data-row>
+        <input name="Ingredients[__i__].Name" class="form-control" placeholder="成分名稱" required />
+        <button type="button" class="btn btn-sm btn-outline-danger js-remove-row">刪除</button>
+    </div>
+</template>
+<template id="nutritionTemplate">
+    <div class="admin-row admin-row-nutrition" data-row>
+        <input name="Nutrition[__i__].Item" class="form-control" placeholder="例：熱量" required />
+        <input name="Nutrition[__i__].Unit" class="form-control" placeholder="例：大卡" />
+        <input name="Nutrition[__i__].PerServing" class="form-control" type="number" step="0.01" min="0" />
+        <input name="Nutrition[__i__].Per100g" class="form-control" type="number" step="0.01" min="0" />
+        <button type="button" class="btn btn-sm btn-outline-danger js-remove-row">刪除</button>
+    </div>
+</template>
+<template id="noteTemplate">
+    <div class="admin-row" data-row>
+        <input name="Notes[__i__].Content" class="form-control" placeholder="備註內容" required />
+        <button type="button" class="btn btn-sm btn-outline-danger js-remove-row">刪除</button>
+    </div>
+</template>
+
+@section Scripts {
+    <script src="~/js/admin-product-detail.js" asp-append-version="true"></script>
+}
