@@ -18,7 +18,10 @@ namespace OfficialWeb.Services
         /// <summary>單一產品完整資料（主檔 + 四張子表）；查無回傳 null。</summary>
         ProductDetailData? GetById(int id);
 
-        /// <summary>新增產品主檔（產品編號取最大值 +1），回傳新編號。</summary>
+        /// <summary>
+        /// 新增產品主檔（產品編號取最大值 +1），回傳新編號。
+        /// 同時寫入 8 列預設營養標示（熱量/蛋白質/脂肪/飽和脂肪/反式脂肪/碳水化合物/糖/鈉，數值 0）。
+        /// </summary>
         int Create(ProductMain product);
 
         /// <summary>刪除產品：主檔 + 四張子表該產品所有列。回傳是否有刪到主檔。</summary>
@@ -39,6 +42,31 @@ namespace OfficialWeb.Services
         private const string IngredientsSheet = "Ingredients";
         private const string NutritionSheet = "Nutrition";
         private const string NotesSheet = "Notes";
+
+        /// <summary>預設營養標示 8 項（台灣包裝食品營養標示格式）：項目 + 單位。</summary>
+        private static readonly (string Item, string Unit)[] DefaultNutritionItems =
+        {
+            ("熱量", "大卡"),
+            ("蛋白質", "公克"),
+            ("脂肪", "公克"),
+            ("飽和脂肪", "公克"),
+            ("反式脂肪", "公克"),
+            ("碳水化合物", "公克"),
+            ("糖", "公克"),
+            ("鈉", "毫克"),
+        };
+
+        /// <summary>產生某產品的 8 列預設營養標示（數值 0），供新增產品與後台預設顯示使用。</summary>
+        public static List<NutritionRow> BuildDefaultNutritionRows(int productId)
+            => DefaultNutritionItems.Select((n, i) => new NutritionRow
+            {
+                ProductId = productId,
+                Item = n.Item,
+                Unit = n.Unit,
+                PerServing = 0,
+                Per100g = 0,
+                Sort = i + 1,
+            }).ToList();
 
         private readonly string _xlsxPath;
         private readonly string _picRoot;
@@ -153,6 +181,21 @@ namespace OfficialWeb.Services
                     ServingsPerPack = product.ServingsPerPack,
                     Sort = newSort,
                 });
+
+                // 預設營養標示 8 列（數值 0），Detail 維護頁一進去即可直接填數字
+                var nutritionWs = wb.Worksheet(NutritionSheet);
+                var next = LastDataRow(nutritionWs) + 1;
+                foreach (var n in BuildDefaultNutritionRows(newId))
+                {
+                    var nRow = nutritionWs.Row(next++);
+                    nRow.Cell(1).Value = n.ProductId;
+                    nRow.Cell(2).Value = n.Item;
+                    nRow.Cell(3).Value = n.Unit;
+                    nRow.Cell(4).Value = n.PerServing!.Value;
+                    nRow.Cell(5).Value = n.Per100g!.Value;
+                    nRow.Cell(6).Value = n.Sort;
+                }
+
                 wb.Save();
                 return newId;
             }
@@ -460,6 +503,10 @@ namespace OfficialWeb.Services
             {
                 "全素・無蛋無奶", "冷藏保存，建議 2 日內享用", "需提前 5 天於 LINE 預約",
             }.Select((n, i) => new ProductNote { ProductId = id, Content = n, Sort = i + 1 }));
+
+            // 其餘產品：套用預設營養標示 8 列（數值 0），與「新增產品」行為一致
+            foreach (var d in list.Where(d => d.Nutrition.Count == 0))
+                d.Nutrition.AddRange(BuildDefaultNutritionRows(d.Main.Id));
 
             return list;
         }

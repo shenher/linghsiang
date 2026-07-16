@@ -180,13 +180,17 @@ namespace OfficialWeb.Controllers
                 ServingsPerPack = data.Main.ServingsPerPack,
                 Sizes = data.Sizes.Select(x => new SizeRowInput { SizeName = x.SizeName, Price = x.Price }).ToList(),
                 Ingredients = data.Ingredients.Select(x => new IngredientRowInput { Name = x.Name }).ToList(),
-                Nutrition = data.Nutrition.Select(x => new NutritionRowInput
-                {
-                    Item = x.Item,
-                    Unit = x.Unit,
-                    PerServing = x.PerServing,
-                    Per100g = x.Per100g,
-                }).ToList(),
+                // 沒有任何營養列（舊資料）時，畫面直接帶入預設 8 列（數值 0），儲存後才寫進 Excel
+                Nutrition = (data.Nutrition.Count > 0
+                        ? data.Nutrition
+                        : MenuExcelService.BuildDefaultNutritionRows(data.Main.Id))
+                    .Select(x => new NutritionRowInput
+                    {
+                        Item = x.Item,
+                        Unit = x.Unit,
+                        PerServing = x.PerServing,
+                        Per100g = x.Per100g,
+                    }).ToList(),
                 Notes = data.Notes.Select(x => new NoteRowInput { Content = x.Content }).ToList(),
                 HasImage = ProductImageExists(id),
             };

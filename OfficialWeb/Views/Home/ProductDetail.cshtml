@@ -5,6 +5,12 @@
     var indentItems = new HashSet<string> { "飽和脂肪", "反式脂肪", "糖" };
     string FormatAmount(decimal? value, string unit)
         => value is null ? "—" : $"{value.Value:0.#####} {unit}".Trim();
+
+    // 營養標示是否已實際填寫：新增產品即帶 8 列預設值（全 0），
+    // 份量未設且所有數值皆為 0 視為「尚未填寫」，前台不顯示整張表
+    var nutritionFilled = Model.Main.ServingGrams is not null
+        || Model.Main.ServingsPerPack is not null
+        || Model.Nutrition.Any(r => (r.PerServing ?? 0) != 0 || (r.Per100g ?? 0) != 0);
 }
 
 <section class="detail-page">
@@ -80,7 +86,7 @@
                     </div>
                 }
 
-                @if (Model.Nutrition.Count > 0 || Model.Main.ServingGrams is not null)
+                @if (Model.Nutrition.Count > 0 && nutritionFilled)
                 {
                     <div class="detail-section">
                         <div class="detail-sec-label">營養標示</div>

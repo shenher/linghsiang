@@ -46,7 +46,7 @@ There are no automated tests in this project.
   - `PicController` — 圖片一律走後端 GET：`Hero`（`Pic/home/hero.*`，no-cache 換圖即生效）、`Logo(name)`（白名單 mark/h-gold/h-white/v-gold）、`Product(id)`（無檔 404，前端顯示佔位圖）、`LineQr`；路徑全由白名單/數字 id 組成，不接受任意檔名
   - `AdminController` — `[Authorize]`（Cookie 驗證，登入路徑 `/Admin/Login`）：`Login`/`Logout`、`HomeImage`+`UploadHomeImage`（副檔名白名單 jpg/png/webp、5MB 上限）、`Products`（主檔列表）、`CreateProduct`/`DeleteProduct`（Modal AJAX，JSON 回應；刪除連同四張子表＋產品圖檔）、`ProductDetail(id)`/`SaveProductDetail`（主檔基本欄位＋動態子表列＋圖片上傳整批儲存）
 - **Services**:
-  - `Services/MenuExcelService.cs` — `IMenuService`（DI Singleton，內部 lock 序列化寫入）：`EnsureSeeded`（啟動時 `Menu.xlsx`/`Pic/` 缺件自動重建，Seed 為設計稿 18 筆菜單）、`GetAll`、`GetCategories`、`GetById`、`Create`、`Delete`、`SaveDetail`
+  - `Services/MenuExcelService.cs` — `IMenuService`（DI Singleton，內部 lock 序列化寫入）：`EnsureSeeded`（啟動時 `Menu.xlsx`/`Pic/` 缺件自動重建，Seed 為設計稿 18 筆菜單）、`GetAll`、`GetCategories`、`GetById`、`Create`（同時寫入 8 列預設營養標示，數值 0：熱量/蛋白質/脂肪/飽和脂肪/反式脂肪/碳水化合物/糖/鈉）、`Delete`、`SaveDetail`。後台 Detail GET 對無營養列的舊資料 fallback 帶入同一組預設列；前台詳細頁在份量未設且營養數值全 0 時隱藏整張營養標示表（視為尚未填寫）
   - `Tools/EmailService.cs` — `IEmailService` generic SMTP utility；registered in DI but not injected anywhere
 - **Menu.xlsx（5 個工作表，中文欄名）**: `Products`（產品編號/名稱/類別/標籤/可宅配/可店取/描述/過敏原/每一份量克數/本包裝含份數/排序）、`Sizes`、`Ingredients`、`Nutrition`、`Notes`（子表皆以產品編號關聯）。產品類別為自由文字，前台 tab 依不重複值動態產生＋寫死「全部」
 - **Models**: `Models/Menu/`（ProductMain、SizePrice、Ingredient、NutritionRow、ProductNote、ProductDetailData）、`Models/ViewModels/`（強型別 + DataAnnotations）、`Models/Settings/`（SiteSettings、AdminSettings）
