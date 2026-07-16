@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using OfficialWeb.Models.Settings;
+using OfficialWeb.Services;
 using OfficialWeb.Tools;
 using System.Net;
 
@@ -32,7 +34,16 @@ builder.Services.AddControllersWithViews(options =>
 // 註冊電子郵件服務（Transient：每次注入都建立新實例，適合短暫的 SMTP 連線）
 builder.Services.AddTransient<IEmailService, EmailService>();
 
+// 全站站台設定（字體等，Options Pattern）
+builder.Services.Configure<SiteSettings>(builder.Configuration.GetSection("SiteSettings"));
+
+// 菜單主檔服務（Singleton：內部以 lock 序列化 Menu.xlsx 讀寫）
+builder.Services.AddSingleton<IMenuService, MenuExcelService>();
+
 var app = builder.Build();
+
+// 啟動防呆：Menu.xlsx 或 Pic/ 缺件時自動建立
+app.Services.GetRequiredService<IMenuService>().EnsureSeeded();
 
 if (!app.Environment.IsDevelopment())
 {

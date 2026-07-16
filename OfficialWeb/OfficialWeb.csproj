@@ -6,4 +6,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
+  </ItemGroup>
+
+  <!-- 菜單主檔與圖片目錄：隨發佈複製（Docker 發佈可用；執行期仍以 ContentRootPath 讀取原始路徑） -->
+  <ItemGroup>
+    <Content Include="Menu.xlsx" CopyToOutputDirectory="PreserveNewest" Condition="Exists('Menu.xlsx')" />
+    <Content Include="Pic\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
