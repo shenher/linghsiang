@@ -1,80 +1,80 @@
+@model ProductsPageViewModel
 @{
-    ViewData["Title"] = "產品介紹";
+    ViewData["Title"] = "產品";
 }
 
-<div class="py-5">
-    <h2 class="bakery-font text-center mb-2">產品介紹</h2>
-    <p class="text-center mb-5">精選手工烘焙糕點，每一口都是幸福的滋味。</p>
-
-    <div class="row g-4">
-        <!-- 產品卡片 1 -->
-        <div class="col-12 col-sm-6 col-lg-4">
-            <div class="card h-100">
-                <img src="~/images/cake1.png" alt="天然奶油蛋糕" class="product-img" />
-                <div class="card-body">
-                    <h5 class="card-title bakery-font">天然奶油蛋糕</h5>
-                    <p class="card-text">採用無添加鮮奶油，層層疊出細膩綿密的口感，是慶生、送禮的首選。</p>
-                </div>
-            </div>
+<section class="products-page">
+    <div class="wrap-1180">
+        <img src="/Pic/Logo?name=mark" alt="拎香焙室商標" class="products-mark" />
+        <div class="sec-label">— MENU · 本季產品</div>
+        <div class="products-head">
+            <h1 class="products-title">產品菜單</h1>
+            <p class="products-desc">全素・無蛋無奶。價格依當季食材微調，最終以 LINE 私訊報價為準。</p>
         </div>
 
-        <!-- 產品卡片 2 -->
-        <div class="col-12 col-sm-6 col-lg-4">
-            <div class="card h-100">
-                <img src="~/images/cake2.png" alt="手工麵包" class="product-img" />
-                <div class="card-body">
-                    <h5 class="card-title bakery-font">手工麵包</h5>
-                    <p class="card-text">每日新鮮出爐，外酥內軟，選用低溫發酵工法讓麥香更深層。</p>
-                </div>
-            </div>
+        @* 分類切換：寫死「全部」＋ Excel 產品類別動態產生；前端 JS 過濾不重載頁 *@
+        <div class="products-tabs" role="tablist" aria-label="產品分類">
+            <button type="button" class="products-tab active" data-category="" role="tab" aria-selected="true">
+                全部 <span class="tab-en">All</span>
+            </button>
+            @foreach (var category in Model.Categories)
+            {
+                <button type="button" class="products-tab" data-category="@category" role="tab" aria-selected="false">
+                    @category
+                </button>
+            }
         </div>
 
-        <!-- 產品卡片 3 -->
-        <div class="col-12 col-sm-6 col-lg-4">
-            <div class="card h-100">
-                <img src="~/images/cake1.png" alt="節慶禮盒" class="product-img" />
-                <div class="card-body">
-                    <h5 class="card-title bakery-font">節慶禮盒</h5>
-                    <p class="card-text">精心包裝的節日禮盒，多種口味組合，送禮自用兩相宜。</p>
-                </div>
-            </div>
+        @* 產品格線（全部輸出，JS 依 data-category 過濾） *@
+        <div class="products-grid">
+            @foreach (var p in Model.Products)
+            {
+                <a class="product-card" href="@Url.Action("ProductDetail", "Home", new { id = p.Id })" data-category="@p.Category">
+                    <div class="product-card-imgbox">
+                        <div class="product-card-img">
+                            <img src="/Pic/Product/@p.Id" alt="@p.Name" loading="lazy"
+                                 onerror="this.closest('.product-card-img').classList.add('is-placeholder');" />
+                            <span class="ph-label">@p.Name</span>
+                        </div>
+                        <div class="product-card-mask"><span class="product-card-more">查看更多
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                        </span></div>
+                        @if (!string.IsNullOrEmpty(p.Tag))
+                        {
+                            <span class="product-card-tag">@p.Tag</span>
+                        }
+                    </div>
+                    <div class="product-card-info">
+                        <div class="product-card-name">@p.Name</div>
+                        <div class="product-card-meta">
+                            <span class="size">@p.SizeSummary</span>
+                            <span class="price">@p.PriceSummary</span>
+                        </div>
+                    </div>
+                </a>
+            }
         </div>
 
-        <!-- 產品卡片 4 -->
-        <div class="col-12 col-sm-6 col-lg-4">
-            <div class="card h-100">
-                <img src="~/images/cake2.png" alt="客製化蛋糕" class="product-img" />
-                <div class="card-body">
-                    <h5 class="card-title bakery-font">客製化蛋糕</h5>
-                    <p class="card-text">依您的需求量身打造，生日、婚禮、週年紀念皆可預訂，歡迎來電洽詢。</p>
-                </div>
+        @* 下單導引 *@
+        <div class="products-cta">
+            <div>
+                <div class="products-cta-title">看到喜歡的了嗎？</div>
+                <div class="products-cta-sub">下單以 LINE 為主，回覆最快。告訴我品項與取貨日就好。</div>
             </div>
-        </div>
-
-        <!-- 產品卡片 5 -->
-        <div class="col-12 col-sm-6 col-lg-4">
-            <div class="card h-100">
-                <img src="~/images/cake1.png" alt="甜塔系列" class="product-img" />
-                <div class="card-body">
-                    <h5 class="card-title bakery-font">甜塔系列</h5>
-                    <p class="card-text">酥脆塔皮搭配當季水果與卡士達醬，口感豐富，視覺與味覺的雙重享受。</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- 產品卡片 6 -->
-        <div class="col-12 col-sm-6 col-lg-4">
-            <div class="card h-100">
-                <img src="~/images/cake2.png" alt="馬卡龍" class="product-img" />
-                <div class="card-body">
-                    <h5 class="card-title bakery-font">馬卡龍</h5>
-                    <p class="card-text">法式工法製作，多種顏色口味可選，外殼酥脆、內餡濃郁，少女心滿分。</p>
-                </div>
+            <div class="products-cta-btns">
+                <a class="btn-line" href="https://line.me/R/ti/p/@@linghsiang" target="_blank" rel="noopener">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 4 3.6 7.3 8.5 7.9.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.5s5.7-3.4 7.7-5.8C21.3 14.4 22 12.8 22 11c0-4.4-4.5-8-10-8zM8 13.4H6c-.2 0-.3-.1-.3-.3v-4c0-.2.1-.3.3-.3s.3.1.3.3v3.7H8c.2 0 .3.1.3.3s-.1.3-.3.3zm1.4-.3c0 .2-.1.3-.3.3s-.3-.1-.3-.3v-4c0-.2.1-.3.3-.3s.3.1.3.3v4zm4.5 0c0 .1-.1.3-.2.3h-.4l-2-2.7v2.4c0 .2-.1.3-.3.3s-.3-.1-.3-.3v-4c0-.1.1-.3.2-.3h.4l2 2.7V9.1c0-.2.1-.3.3-.3s.3.1.3.3v4zm3.1-2.3c.2 0 .3.1.3.3s-.1.3-.3.3h-1.6v1.1H17c.2 0 .3.1.3.3s-.1.3-.3.3h-1.9c-.2 0-.3-.1-.3-.3V9.1c0-.2.1-.3.3-.3H17c.2 0 .3.1.3.3s-.1.3-.3.3h-1.6v1.1H17z"/></svg>
+                    LINE 下單
+                </a>
+                <a class="btn-ghost" asp-controller="Home" asp-action="Order">
+                    下單流程
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                </a>
             </div>
         </div>
     </div>
+</section>
 
-    <div class="text-center mt-5">
-        <p class="fs-5">如需預訂或詢問更多產品資訊，歡迎<a asp-action="Contact">聯絡我們</a>。</p>
-    </div>
-</div>
+@section Scripts {
+    <script src="~/js/products.js" asp-append-version="true"></script>
+}
