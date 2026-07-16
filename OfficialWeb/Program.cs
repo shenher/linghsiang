@@ -41,6 +41,9 @@ builder.Services.Configure<SiteSettings>(builder.Configuration.GetSection("SiteS
 // 後台設定（登入密碼；環境變數 ADMIN_PASSWORD 可覆蓋，見 AdminController）
 builder.Services.Configure<AdminSettings>(builder.Configuration.GetSection("AdminSettings"));
 
+// 資料檔路徑：未設定 DataRoot 時用專案根目錄；Docker 以環境變數 DataRoot 指到掛載的 /app/data
+builder.Services.AddSingleton<IDataPaths, DataPathService>();
+
 // 菜單主檔服務（Singleton：內部以 lock 序列化 Menu.xlsx 讀寫）
 builder.Services.AddSingleton<IMenuService, MenuExcelService>();
 

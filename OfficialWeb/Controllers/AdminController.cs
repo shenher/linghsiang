@@ -27,12 +27,12 @@ namespace OfficialWeb.Controllers
         public AdminController(
             IMenuService menuService,
             IOptions<AdminSettings> adminSettings,
-            IWebHostEnvironment env,
+            IDataPaths dataPaths,
             ILogger<AdminController> logger)
         {
             _menuService = menuService;
             _adminSettings = adminSettings.Value;
-            _picRoot = Path.Combine(env.ContentRootPath, "Pic");
+            _picRoot = dataPaths.PicRoot;
             _logger = logger;
         }
 
@@ -82,7 +82,7 @@ namespace OfficialWeb.Controllers
             return RedirectToAction(nameof(Login));
         }
 
-        // ────────────────────────────── 首頁圖片維護 ──────────────────────────────
+        // ────────────────────────────── 首頁＆關於圖片維護 ──────────────────────────────
 
         [HttpGet]
         public IActionResult HomeImage()
@@ -93,27 +93,48 @@ namespace OfficialWeb.Controllers
         [HttpPost]
         public IActionResult UploadHomeImage(HomeImageViewModel vm)
         {
-            var error = ValidateImage(vm.Image);
-            if (error is not null) ModelState.AddModelError(nameof(vm.Image), error);
-            if (!ModelState.IsValid) return View(nameof(HomeImage), vm);
-
-            var dir = Path.Combine(_picRoot, "home");
-            Directory.CreateDirectory(dir);
-
-            // 移除既有 hero.*（副檔名可能不同），再存新檔
-            foreach (var old in Directory.GetFiles(dir, "hero.*"))
-                System.IO.File.Delete(old);
-
-            var ext = Path.GetExtension(vm.Image!.FileName).ToLowerInvariant();
-            var path = Path.Combine(dir, "hero" + ext);
-            using (var stream = System.IO.File.Create(path))
+            var error = ValidateImage(vm.HeroImage);
+            if (error is not null)
             {
-                vm.Image.CopyTo(stream);
+                ModelState.AddModelError(nameof(vm.HeroImage), error);
+                return View(nameof(HomeImage), vm);
             }
-            _logger.LogInformation("首頁背景已更新：{Path}", path);
 
+            SaveSiteImage("home", "hero", vm.HeroImage!);
             TempData["Message"] = "首頁圖片已更新。";
             return RedirectToAction(nameof(HomeImage));
+        }
+
+        [HttpPost]
+        public IActionResult UploadAboutImage(HomeImageViewModel vm)
+        {
+            var error = ValidateImage(vm.AboutImage);
+            if (error is not null)
+            {
+                ModelState.AddModelError(nameof(vm.AboutImage), error);
+                return View(nameof(HomeImage), vm);
+            }
+
+            SaveSiteImage("about", "about", vm.AboutImage!);
+            TempData["Message"] = "關於頁圖片已更新。";
+            return RedirectToAction(nameof(HomeImage));
+        }
+
+        /// <summary>存站台圖片：移除同主檔名既有檔（副檔名可能不同）後以上傳副檔名存檔。</summary>
+        private void SaveSiteImage(string subDir, string stem, IFormFile file)
+        {
+            var dir = Path.Combine(_picRoot, subDir);
+            Directory.CreateDirectory(dir);
+            foreach (var old in Directory.GetFiles(dir, stem + ".*"))
+                System.IO.File.Delete(old);
+
+            var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+            var path = Path.Combine(dir, stem + ext);
+            using (var stream = System.IO.File.Create(path))
+            {
+                file.CopyTo(stream);
+            }
+            _logger.LogInformation("站台圖片已更新：{Path}", path);
         }
 
         // ────────────────────────────── 產品維護 Main ──────────────────────────────

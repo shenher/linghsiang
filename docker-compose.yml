@@ -8,12 +8,14 @@ services:
       - "443:443"
     volumes:
       - ./certs:/app/certs
-      # 菜單主檔：後台維護寫入直接落地宿主機（檔案須先存在，repo 內已含初始檔；
-      # 若手動刪除請先本機 dotnet run 讓 EnsureSeeded 重建，再 docker compose up）
-      - ./OfficialWeb/Menu.xlsx:/app/Menu.xlsx
-      # 圖片目錄（logo / 首頁 hero / 產品照 / LINE QRCode），重建容器資料不遺失
-      - ./OfficialWeb/Pic:/app/Pic
+      # 站台資料目錄（Menu.xlsx + Pic/：hero / logo / 產品照 / QRCode）。
+      # ./data 已加入 .gitignore，與 git 管的程式碼完全分離：
+      # git pull、docker compose up --build 都不會動到正式資料。
+      # 首次啟動時容器內 EnsureSeeded 會自動建立初始 Menu.xlsx 並複製內建 Logo / Hero 圖。
+      - ./data:/app/data
     environment:
       - CERT_PASSWORD=${CERT_PASSWORD}
       - ASPNETCORE_ENVIRONMENT=Production
+      # 資料檔根目錄：指到上面掛載的 data 目錄
+      - DataRoot=/app/data
     restart: unless-stopped

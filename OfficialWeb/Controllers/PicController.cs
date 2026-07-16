@@ -27,9 +27,9 @@ namespace OfficialWeb.Controllers
 
         private readonly string _picRoot;
 
-        public PicController(IWebHostEnvironment env)
+        public PicController(Services.IDataPaths dataPaths)
         {
-            _picRoot = Path.Combine(env.ContentRootPath, "Pic");
+            _picRoot = dataPaths.PicRoot;
         }
 
         /// <summary>首頁 Hero 背景（Pic/home/hero.*）。短快取：後台換圖即時生效。</summary>
@@ -37,6 +37,14 @@ namespace OfficialWeb.Controllers
         public IActionResult Hero()
         {
             var file = FindByStem(Path.Combine(_picRoot, "home"), "hero");
+            return file is null ? NotFound() : ServeFile(file, cacheSeconds: 0);
+        }
+
+        /// <summary>關於頁圖片（Pic/about/about.*）；無檔 404，前端顯示佔位圖。後台換圖即時生效。</summary>
+        [HttpGet]
+        public IActionResult About()
+        {
+            var file = FindByStem(Path.Combine(_picRoot, "about"), "about");
             return file is null ? NotFound() : ServeFile(file, cacheSeconds: 0);
         }
 

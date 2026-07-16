@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-LING HSIANG BAKERY（拎香焙室）— 全素接單烘焙品牌官網 + 菜單主檔維護後台。無資料庫：產品資料由專案根目錄 `OfficialWeb/Menu.xlsx` 驅動（ClosedXML 讀寫），圖片實體檔集中在 `OfficialWeb/Pic/` 並一律經由後端 `PicController` GET 提供。前台五頁（首頁/關於/產品/產品詳細/下單）依 `design-src/` 設計稿實作；`/Admin` 為簡單密碼登入的主檔維護後台。`EmailService` exists as a generic SMTP utility but is not currently wired to any page action.
+LING HSIANG BAKERY（拎香焙室）— 全素接單烘焙品牌官網 + 菜單主檔維護後台。無資料庫：產品資料由 `Menu.xlsx` 驅動（ClosedXML 讀寫），圖片實體檔集中在 `Pic/` 並一律經由後端 `PicController` GET 提供。資料檔實體位置由 `IDataPaths`（`Services/DataPathService.cs`）解析：未設定 `DataRoot` 時用專案根目錄（本機開發 = repo 內 `OfficialWeb/Menu.xlsx`、`OfficialWeb/Pic/`）；正式環境（Docker）以環境變數 `DataRoot=/app/data` 指到掛載的 `./data/`，讓 git 管的程式碼與站台自己長的正式資料徹底分離。前台五頁（首頁/關於/產品/產品詳細/下單）依 `design-src/` 設計稿實作；`/Admin` 為簡單密碼登入的主檔維護後台。`EmailService` exists as a generic SMTP utility but is not currently wired to any page action.
 
 ## Commands
 
@@ -43,10 +43,11 @@ There are no automated tests in this project.
 - **Framework**: ASP.NET Core 8 MVC, .NET SDK 8.0.300 (`OfficialWeb/global.json`)；NuGet：ClosedXML 0.105（MIT，讀寫 .xlsx）
 - **Controllers**:
   - `HomeController` — 前台全 GET：`Index`（全屏 Hero）、`About`（理念/地圖/聯絡）、`Products`（讀 Excel 組 `ProductsPageViewModel`，分類 tab 由前端 JS 過濾）、`ProductDetail(int id)`（查無 404）、`Order`；`Contact` 301 轉址到 `About`（保留舊連結）
-  - `PicController` — 圖片一律走後端 GET：`Hero`（`Pic/home/hero.*`，no-cache 換圖即生效）、`Logo(name)`（白名單 mark/h-gold/h-white/v-gold）、`Product(id)`（無檔 404，前端顯示佔位圖）、`LineQr`；路徑全由白名單/數字 id 組成，不接受任意檔名
-  - `AdminController` — `[Authorize]`（Cookie 驗證，登入路徑 `/Admin/Login`）：`Login`/`Logout`、`HomeImage`+`UploadHomeImage`（副檔名白名單 jpg/png/webp、5MB 上限）、`Products`（主檔列表）、`CreateProduct`/`DeleteProduct`（Modal AJAX，JSON 回應；刪除連同四張子表＋產品圖檔）、`ProductDetail(id)`/`SaveProductDetail`（主檔基本欄位＋動態子表列＋圖片上傳整批儲存）
+  - `PicController` — 圖片一律走後端 GET：`Hero`（`Pic/home/hero.*`，no-cache 換圖即生效）、`About`（`Pic/about/about.*`，無檔 404 前端佔位圖）、`Logo(name)`（白名單 mark/h-gold/h-white/v-gold）、`Product(id)`（無檔 404，前端顯示佔位圖）、`LineQr`；路徑全由白名單/數字 id 組成，不接受任意檔名
+  - `AdminController` — `[Authorize]`（Cookie 驗證，登入路徑 `/Admin/Login`）：`Login`/`Logout`、`HomeImage`（首頁＆關於圖片維護）+`UploadHomeImage`/`UploadAboutImage`（副檔名白名單 jpg/png/webp、5MB 上限）、`Products`（主檔列表）、`CreateProduct`/`DeleteProduct`（Modal AJAX，JSON 回應；刪除連同四張子表＋產品圖檔）、`ProductDetail(id)`/`SaveProductDetail`（主檔基本欄位＋動態子表列＋圖片上傳整批儲存）
 - **Services**:
-  - `Services/MenuExcelService.cs` — `IMenuService`（DI Singleton，內部 lock 序列化寫入）：`EnsureSeeded`（啟動時 `Menu.xlsx`/`Pic/` 缺件自動重建，Seed 為設計稿 18 筆菜單）、`GetAll`、`GetCategories`、`GetById`、`Create`（同時寫入 8 列預設營養標示，數值 0：熱量/蛋白質/脂肪/飽和脂肪/反式脂肪/碳水化合物/糖/鈉）、`Delete`、`SaveDetail`。後台 Detail GET 對無營養列的舊資料 fallback 帶入同一組預設列；前台詳細頁在份量未設且營養數值全 0 時隱藏整張營養標示表（視為尚未填寫）
+  - `Services/DataPathService.cs` — `IDataPaths`（DI Singleton）：解析 `Menu.xlsx` 與 `Pic/` 實體路徑（設定 `DataRoot` 有值時用該目錄，否則用 ContentRootPath）
+  - `Services/MenuExcelService.cs` — `IMenuService`（DI Singleton，內部 lock 序列化寫入）：`EnsureSeeded`（啟動時 `Menu.xlsx`/`Pic/` 缺件自動重建，Seed 為設計稿 18 筆菜單；DataRoot 與程式目錄分離時另將內建種子圖片補進資料目錄，只補缺不覆蓋）、`GetAll`、`GetCategories`、`GetById`、`Create`（同時寫入 8 列預設營養標示，數值 0：熱量/蛋白質/脂肪/飽和脂肪/反式脂肪/碳水化合物/糖/鈉）、`Delete`、`SaveDetail`。後台 Detail GET 對無營養列的舊資料 fallback 帶入同一組預設列；前台詳細頁在份量未設且營養數值全 0 時隱藏整張營養標示表（視為尚未填寫）
   - `Tools/EmailService.cs` — `IEmailService` generic SMTP utility；registered in DI but not injected anywhere
 - **Menu.xlsx（5 個工作表，中文欄名）**: `Products`（產品編號/名稱/類別/標籤/可宅配/可店取/描述/過敏原/每一份量克數/本包裝含份數/排序）、`Sizes`、`Ingredients`、`Nutrition`、`Notes`（子表皆以產品編號關聯）。產品類別為自由文字，前台 tab 依不重複值動態產生＋寫死「全部」
 - **Models**: `Models/Menu/`（ProductMain、SizePrice、Ingredient、NutritionRow、ProductNote、ProductDetailData）、`Models/ViewModels/`（強型別 + DataAnnotations）、`Models/Settings/`（SiteSettings、AdminSettings）
@@ -65,9 +66,9 @@ There are no automated tests in this project.
 
 密碼優先序：環境變數 `ADMIN_PASSWORD` > `appsettings.json` → `AdminSettings:Password`。Cookie 驗證（`/Admin/Login`，8 小時 sliding）。
 
-### Docker 持久化
+### Docker 持久化（程式碼 / 站台資料分離）
 
-`docker-compose.yml` 已掛 bind mount：`./OfficialWeb/Menu.xlsx:/app/Menu.xlsx`、`./OfficialWeb/Pic:/app/Pic`（另有 `./certs:/app/certs`）。掛單一檔案時宿主機該檔必須先存在（repo 已含初始 `Menu.xlsx`；若手動刪除，先本機 `dotnet run` 讓 `EnsureSeeded` 重建再 `docker compose up`）。
+`docker-compose.yml` 掛 `./data:/app/data`（gitignore）並設 `DataRoot=/app/data`（另有 `./certs:/app/certs`）。首次啟動 `EnsureSeeded` 在空的 data 目錄自動建立初始 `Menu.xlsx` 並複製內建 Logo/Hero 圖；之後 `git pull`、`docker compose up --build` 皆不會動到正式資料。repo 內 `OfficialWeb/Menu.xlsx`、`OfficialWeb/Pic/` 僅為本機開發與種子用。部署細節見 `dockerPublish.md`。
 
 ### HTTPS & Certificate
 

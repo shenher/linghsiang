@@ -70,12 +70,14 @@ namespace OfficialWeb.Services
 
         private readonly string _xlsxPath;
         private readonly string _picRoot;
+        private readonly string _seedPicRoot;
         private readonly object _lock = new();
 
-        public MenuExcelService(IWebHostEnvironment env)
+        public MenuExcelService(IDataPaths dataPaths)
         {
-            _xlsxPath = Path.Combine(env.ContentRootPath, "Menu.xlsx");
-            _picRoot = Path.Combine(env.ContentRootPath, "Pic");
+            _xlsxPath = dataPaths.MenuXlsxPath;
+            _picRoot = dataPaths.PicRoot;
+            _seedPicRoot = dataPaths.SeedPicRoot;
         }
 
         // ────────────────────────────── 讀取 ──────────────────────────────
@@ -355,11 +357,28 @@ namespace OfficialWeb.Services
         {
             lock (_lock)
             {
-                // Pic/ 目錄缺件時自動建立（含四個子目錄）
-                foreach (var sub in new[] { "home", "logo", "products", "qrcode" })
+                // Pic/ 目錄缺件時自動建立（含五個子目錄）
+                foreach (var sub in new[] { "home", "about", "logo", "products", "qrcode" })
                     Directory.CreateDirectory(Path.Combine(_picRoot, sub));
 
+                // DataRoot 與程式目錄分離時（Docker 掛載空的 data 目錄），
+                // 把程式內建種子圖片（Logo、預設 Hero）補進資料目錄：只補缺、絕不覆蓋既有檔案
+                if (!string.Equals(_picRoot, _seedPicRoot, StringComparison.OrdinalIgnoreCase)
+                    && Directory.Exists(_seedPicRoot))
+                {
+                    foreach (var seedFile in Directory.GetFiles(_seedPicRoot, "*", SearchOption.AllDirectories))
+                    {
+                        var relative = Path.GetRelativePath(_seedPicRoot, seedFile);
+                        var target = Path.Combine(_picRoot, relative);
+                        if (File.Exists(target)) continue;
+                        Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+                        File.Copy(seedFile, target);
+                    }
+                }
+
                 if (File.Exists(_xlsxPath)) return;
+
+                Directory.CreateDirectory(Path.GetDirectoryName(_xlsxPath)!);
 
                 using var wb = new XLWorkbook();
 

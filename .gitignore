@@ -425,3 +425,6 @@ certs/
 # 設計稿原始 HTML（79MB 自解壓 bundler，解包產物在 design-src/，原始檔不 commit；計畫文件 plan.md 保留追蹤）
 OfficialWeb/design-raw/*
 !OfficialWeb/design-raw/plan.md
+
+# 正式環境站台資料（docker-compose 掛載 ./data:/app/data；Menu.xlsx 與上傳圖片，不進版本控制）
+data/

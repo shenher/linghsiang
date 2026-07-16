@@ -365,7 +365,25 @@ button { cursor: pointer; }
 .about-stat-k { font-size: 28px; font-weight: 500; color: var(--accent); }
 .about-stat-v { font-size: 12px; color: var(--muted); margin-top: 4px; }
 
-.about-ph { aspect-ratio: 4 / 5; border-radius: 6px; width: 100%; }
+/* 關於頁右側圖片（後台「首頁＆關於圖片」維護；無檔時顯示佔位圖） */
+.about-photo {
+  aspect-ratio: 4 / 5;
+  border-radius: 6px;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.about-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.about-photo .ph-label { display: none; position: absolute; }
+.about-photo.is-placeholder {
+  background-color: var(--ph-bg);
+  background-image: repeating-linear-gradient(45deg, transparent 0, transparent 10px, rgba(0, 0, 0, 0.04) 10px, rgba(0, 0, 0, 0.04) 11px);
+}
+.about-photo.is-placeholder img { display: none; }
+.about-photo.is-placeholder .ph-label { display: inline-flex; }
 
 .about-visit {
   padding: 72px 0;
