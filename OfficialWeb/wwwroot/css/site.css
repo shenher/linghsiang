@@ -206,6 +206,146 @@ button { cursor: pointer; }
   margin-bottom: 14px;
 }
 
+/* ── 5. 首頁 ───────────────────────────────────────────── */
+.home-hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+  color: #fff;
+  overflow: hidden;
+  padding: 140px 96px 80px;
+}
+
+.home-hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.home-hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(90deg, rgba(20, 14, 10, 0.62) 0%, rgba(20, 14, 10, 0.34) 55%, rgba(20, 14, 10, 0.12) 100%),
+    linear-gradient(180deg, rgba(20, 14, 10, 0.28) 0%, rgba(20, 14, 10, 0.05) 45%, rgba(20, 14, 10, 0.42) 100%);
+}
+
+.home-hero-content { position: relative; z-index: 2; max-width: 640px; }
+
+.home-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  margin-bottom: 34px;
+}
+
+.home-hero-title {
+  font-weight: 500;
+  font-size: 90px;
+  letter-spacing: 0.08em;
+  line-height: 1.08;
+  margin: 0;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.4);
+}
+
+.home-hero-en {
+  font-style: italic;
+  font-size: 22px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 16px;
+  letter-spacing: 0.06em;
+}
+
+.home-hero-intro {
+  max-width: 540px;
+  margin: 36px 0 0;
+  font-size: 18px;
+  line-height: 1.9;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.home-hero-ctas {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-top: 42px;
+}
+
+/* Hero 上的白框次要按鈕（深色底專用） */
+.btn-ghost-light {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.btn-ghost-light:hover { color: #fff; background: rgba(255, 255, 255, 0.18); border-color: rgba(255, 255, 255, 0.75); }
+
+.home-hero-hints {
+  display: flex;
+  gap: 24px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-top: 56px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.78);
+  letter-spacing: 0.14em;
+}
+.home-hero-hints .dot { opacity: 0.5; }
+
+/* 首頁進場動畫（home.js 於掛載後 60ms 加 .in 觸發） */
+.hm-fade {
+  opacity: 0;
+  transform: translateX(-44px);
+  transition: opacity 1.1s cubic-bezier(0.22, 0.61, 0.36, 1), transform 1.1s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.hm-fade.in { opacity: 1; transform: translateX(0); }
+
+.hm-mask { display: block; overflow: hidden; }
+.hm-mask > span {
+  display: block;
+  transform: translateY(112%);
+  transition: transform 1.2s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.hm-mask.in > span { transform: translateY(0); }
+
+@keyframes hm-zoom { from { transform: scale(1.06); } to { transform: scale(1); } }
+.hm-hero-img { animation: hm-zoom 2.4s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+
+@media (max-width: 759.98px) {
+  .home-hero { min-height: 92vh; padding: 120px 28px 64px; }
+  .home-hero-badge { margin-bottom: 26px; }
+  .home-hero-title { font-size: 64px; }
+  .home-hero-en { font-size: 17px; }
+  .home-hero-intro { margin-top: 28px; font-size: 15px; }
+  .home-hero-ctas { margin-top: 32px; }
+  .home-hero-hints { margin-top: 36px; gap: 14px; }
+}
+
 /* ── RWD：共用（<760px） ───────────────────────────────── */
 @media (max-width: 759.98px) {
   .wrap-1100, .wrap-1180 { padding-left: 24px; padding-right: 24px; }
