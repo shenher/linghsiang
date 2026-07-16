@@ -8,6 +8,11 @@ services:
       - "443:443"
     volumes:
       - ./certs:/app/certs
+      # 菜單主檔：後台維護寫入直接落地宿主機（檔案須先存在，repo 內已含初始檔；
+      # 若手動刪除請先本機 dotnet run 讓 EnsureSeeded 重建，再 docker compose up）
+      - ./OfficialWeb/Menu.xlsx:/app/Menu.xlsx
+      # 圖片目錄（logo / 首頁 hero / 產品照 / LINE QRCode），重建容器資料不遺失
+      - ./OfficialWeb/Pic:/app/Pic
     environment:
       - CERT_PASSWORD=${CERT_PASSWORD}
       - ASPNETCORE_ENVIRONMENT=Production

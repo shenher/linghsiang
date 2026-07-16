@@ -422,5 +422,6 @@ FodyWeavers.xsd
 *.DS_Store
 certs/
 
-# 設計稿原始 HTML（79MB 自解壓 bundler，解包產物在 design-src/，原始檔不 commit）
-design-raw/
+# 設計稿原始 HTML（79MB 自解壓 bundler，解包產物在 design-src/，原始檔不 commit；計畫文件 plan.md 保留追蹤）
+OfficialWeb/design-raw/*
+!OfficialWeb/design-raw/plan.md
