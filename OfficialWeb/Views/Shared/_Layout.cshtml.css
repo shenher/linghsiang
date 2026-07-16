@@ -1,7 +1,0 @@
-/* Scoped layout overrides — 烘焙主題樣式請維護在 wwwroot/css/site.css */
-
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
-}

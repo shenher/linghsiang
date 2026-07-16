@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using OfficialWeb.Models.Settings;
+using OfficialWeb.Services;
 using OfficialWeb.Tools;
 using System.Net;
 
@@ -32,7 +35,34 @@ builder.Services.AddControllersWithViews(options =>
 // 註冊電子郵件服務（Transient：每次注入都建立新實例，適合短暫的 SMTP 連線）
 builder.Services.AddTransient<IEmailService, EmailService>();
 
+// 全站站台設定（字體等，Options Pattern）
+builder.Services.Configure<SiteSettings>(builder.Configuration.GetSection("SiteSettings"));
+
+// 後台設定（登入密碼；環境變數 ADMIN_PASSWORD 可覆蓋，見 AdminController）
+builder.Services.Configure<AdminSettings>(builder.Configuration.GetSection("AdminSettings"));
+
+// 資料檔路徑：未設定 DataRoot 時用專案根目錄；Docker 以環境變數 DataRoot 指到掛載的 /app/data
+builder.Services.AddSingleton<IDataPaths, DataPathService>();
+
+// 菜單主檔服務（Singleton：內部以 lock 序列化 Menu.xlsx 讀寫）
+builder.Services.AddSingleton<IMenuService, MenuExcelService>();
+
+// 後台 Cookie 驗證（簡單密碼登入）
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Admin/Login";
+        options.AccessDeniedPath = "/Admin/Login";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+    });
+
 var app = builder.Build();
+
+// 啟動防呆：Menu.xlsx 或 Pic/ 缺件時自動建立
+app.Services.GetRequiredService<IMenuService>().EnsureSeeded();
 
 if (!app.Environment.IsDevelopment())
 {
@@ -57,6 +87,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 // 設定預設路由

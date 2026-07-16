@@ -1,0 +1,25 @@
+@model AdminLoginViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "登入";
+}
+
+<div class="admin-login-card">
+    <img src="/Pic/Logo?name=mark" alt="拎香焙室商標" class="admin-login-mark" />
+    <h1 class="admin-login-title">後台登入</h1>
+    <p class="admin-login-sub">主檔維護系統，僅供店主使用。</p>
+
+    <form asp-controller="Admin" asp-action="Login" method="post">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <div class="mb-3">
+            <label asp-for="Password" class="form-label"></label>
+            <input asp-for="Password" class="form-control" autofocus autocomplete="current-password" />
+            <span asp-validation-for="Password" class="text-danger small"></span>
+        </div>
+        <button type="submit" class="btn-accent w-100 justify-content-center">登入</button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

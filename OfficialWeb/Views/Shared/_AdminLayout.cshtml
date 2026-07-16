@@ -1,0 +1,56 @@
+@using Microsoft.Extensions.Options
+@using OfficialWeb.Models.Settings
+@inject IOptions<SiteSettings> SiteOptions
+@{
+    var fontFamily = string.IsNullOrWhiteSpace(SiteOptions.Value.FontFamily)
+        ? "Noto Sans TC"
+        : SiteOptions.Value.FontFamily!.Trim();
+    var fontQuery = Uri.EscapeDataString(fontFamily).Replace("%20", "+");
+    var isAuthed = User.Identity?.IsAuthenticated == true;
+}
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>@ViewData["Title"] - 拎香焙室 後台</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=@(fontQuery):wght@400;500;600;700&display=swap" />
+    <style>:root { --site-font: '@fontFamily'; }</style>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="admin-body">
+    <header class="admin-nav">
+        <a class="admin-brand" asp-controller="Admin" asp-action="Products">
+            <img src="/Pic/Logo?name=mark" alt="" />
+            <span>拎香焙室 · 主檔維護</span>
+        </a>
+        @if (isAuthed)
+        {
+            <nav class="admin-nav-links">
+                <a asp-controller="Admin" asp-action="HomeImage">首頁&amp;關於圖片</a>
+                <a asp-controller="Admin" asp-action="Products">產品維護</a>
+                <a asp-controller="Home" asp-action="Index" target="_blank">看前台</a>
+                <form asp-controller="Admin" asp-action="Logout" method="post" class="d-inline">
+                    <button type="submit" class="admin-logout">登出</button>
+                </form>
+            </nav>
+        }
+    </header>
+
+    <main class="admin-main">
+        @if (TempData["Message"] is string message)
+        {
+            <div class="alert alert-success admin-alert" role="alert">@message</div>
+        }
+        @RenderBody()
+    </main>
+
+    @* AJAX 防偽 token 來源（全域 AutoValidateAntiforgeryToken 驗證用） *@
+    <form id="af-token">@Html.AntiForgeryToken()</form>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
