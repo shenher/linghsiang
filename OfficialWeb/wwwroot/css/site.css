@@ -1,114 +1,228 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+/* ============================================================
+   拎香焙室 LING HSIANG BAKERY — site.css（依 design-src 設計稿重寫）
+   分區：
+   1. 主題變數與全域基礎
+   2. 導覽列（首頁 light 透明 / 內頁 solid sticky）
+   3. 頁尾
+   4. 共用按鈕・佔位圖・區塊小標
+   5. 首頁
+   6. 關於頁
+   7. 產品頁
+   8. 產品詳細頁
+   9. 下單頁
+   10. 後台
+   RWD 斷點：760px（設計稿 isMobile 判斷）
+   ============================================================ */
 
-/* =========================================================
-   1. 全域 / 基礎樣式 (Global / Base)
-   ========================================================= */
+/* ── 1. 主題變數與全域基礎 ─────────────────────────────── */
+:root {
+  --bg: #faf6ee;           /* 米白背景 */
+  --surface: #fffaf0;      /* 卡片底 */
+  --fg: #3a2e22;           /* 深棕文字 */
+  --muted: #7a6a55;        /* 次要文字 */
+  --line: #e8dfcd;         /* 邊線 */
+  --accent: #c97a5a;       /* 主題陶土橘 */
+  --accent-soft: #f3d9c6;  /* 主題淡橘 */
+  --ph-bg: #ece2cf;        /* 佔位圖底 */
+  --line-green: #06C755;   /* LINE 綠 */
+  /* --site-font 由 _Layout 依 appsettings SiteSettings:FontFamily 動態輸出 */
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
 body {
-    font-family: 'Noto Sans TC', sans-serif;
-    background-color: #FAF6F0;
-    color: #6A4E2B;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--site-font), "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-    color: #B88930;
+h1, h2, h3, h4, h5, h6, button, input, select, textarea {
+  font-family: var(--site-font), "Noto Sans TC", "Microsoft JhengHei", sans-serif;
 }
 
-a:hover {
-    color: #9B7B41;
+a { color: inherit; }
+button { cursor: pointer; }
+
+/* 內容容器（設計稿 max-width 規律：關於/下單 1100、產品 1180） */
+.wrap-1100 { max-width: 1100px; margin: 0 auto; padding-left: 48px; padding-right: 48px; }
+.wrap-1180 { max-width: 1180px; margin: 0 auto; padding-left: 48px; padding-right: 48px; }
+
+/* ── 2. 導覽列 ─────────────────────────────────────────── */
+.site-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 48px;
 }
 
-/* =========================================================
-   2. 字型與標籤 (Typography & Badges)
-   ========================================================= */
-.bakery-font {
-    letter-spacing: 0.1em;
-    font-weight: bold;
+.site-nav--light {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 20;
+  color: #fff;
+  background: transparent;
 }
 
-.bakery-badge {
-    background: #B88930;
-    color: #fff;
-    border-radius: 20px;
-    padding: 0.25rem 1rem;
-    font-size: 1.1rem;
+.site-nav--solid {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  color: var(--fg);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
 }
 
-/* =========================================================
-   3. 導覽列 (Navbar)
-   ========================================================= */
-.bg-bakery {
-    background: #FAECDB;
+.site-nav-brand { display: flex; align-items: center; text-decoration: none; }
+
+.site-nav-logo { height: 34px; width: auto; display: block; }
+.site-nav--light .site-nav-logo { filter: drop-shadow(0 1px 10px rgba(0, 0, 0, 0.4)); }
+
+.site-nav-links { display: flex; gap: 36px; align-items: center; }
+
+.site-nav-link {
+  font-size: 15px;
+  font-weight: 400;
+  text-decoration: none;
+  padding-bottom: 3px;
+  border-bottom: 2px solid transparent;
 }
 
-.navbar-brand img {
-    vertical-align: middle;
+.site-nav--solid .site-nav-link { color: var(--muted); }
+.site-nav--solid .site-nav-link.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+.site-nav--solid .site-nav-link:hover { color: var(--fg); }
+
+.site-nav--light .site-nav-link { color: rgba(255, 255, 255, 0.85); text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35); }
+.site-nav--light .site-nav-link.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+.site-nav--light .site-nav-link:hover { color: #fff; }
+
+/* ── 3. 頁尾 ───────────────────────────────────────────── */
+.site-footer {
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+  padding: 40px 48px;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--muted);
 }
 
-.navbar-light .navbar-nav .nav-link,
-.navbar-light .navbar-nav .nav-link.active {
-    color: #B88930;
-    font-weight: 600;
+.site-footer-brand { display: flex; align-items: center; gap: 16px; }
+.site-footer-mark { width: 44px; height: 44px; display: block; }
+.site-footer-name { font-size: 18px; font-weight: 600; color: var(--fg); }
+.site-footer-est { font-size: 11px; letter-spacing: 0.1em; margin-top: 6px; }
+
+.site-footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
+.site-footer-links a { font-size: 13px; color: var(--muted); text-decoration: none; }
+.site-footer-links a:hover { color: var(--fg); }
+
+.site-footer-social { display: flex; gap: 14px; align-items: center; }
+.site-footer-social a { color: var(--muted); display: inline-flex; }
+.site-footer-social a:hover { color: var(--accent); }
+
+/* ── 4. 共用按鈕・佔位圖・區塊小標 ─────────────────────── */
+.btn-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--line-green);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 26px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: filter 0.15s ease, box-shadow 0.15s ease;
+}
+.btn-line:hover { color: #fff; filter: brightness(0.94); box-shadow: 0 4px 14px rgba(6, 199, 85, 0.3); }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 13px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+.btn-accent {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: filter 0.15s ease;
+}
+.btn-accent:hover { color: #fff; filter: brightness(0.94); }
+
+/* 佔位圖（無實體圖檔時顯示，取自設計稿 .ph） */
+.ph {
+  position: relative;
+  background-color: var(--ph-bg);
+  background-image: repeating-linear-gradient(45deg, transparent 0, transparent 10px, rgba(0, 0, 0, 0.04) 10px, rgba(0, 0, 0, 0.04) 11px);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ph-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.4);
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
 }
 
-.navbar-light .navbar-nav .nav-link:hover {
-    color: #9B7B41;
+/* 區塊小標（設計稿 mono 小字「— ABOUT · 開店理念」樣式） */
+.sec-label {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
 }
 
-/* =========================================================
-   4. 主視覺區塊 (Hero Section)
-   ========================================================= */
-.bg-hero {
-    background: linear-gradient(90deg, #EFE1CB 40%, #F9F3E9 100%);
-    min-height: 70vh;
+/* ── RWD：共用（<760px） ───────────────────────────────── */
+@media (max-width: 759.98px) {
+  .wrap-1100, .wrap-1180 { padding-left: 24px; padding-right: 24px; }
+
+  .site-nav { padding: 14px 20px; }
+  .site-nav-logo { height: 24px; }
+  .site-nav-links { gap: 22px; }
+
+  .site-footer {
+    padding: 32px 24px;
+    flex-direction: column;
+    gap: 18px;
+    align-items: flex-start;
+  }
 }
 
-/* =========================================================
-   5. 卡片 (Cards)
-   ========================================================= */
-.card {
-    border-radius: 24px;
-    border: none;
-    box-shadow: 0 4px 16px rgba(180, 137, 48, 0.06);
-    margin-bottom: 2rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(180, 137, 48, 0.14);
-}
-
-/* =========================================================
-   6. 頁尾 (Footer)
-   ========================================================= */
-.text-bakery-footer {
-    color: #9B7B41 !important;
-}
-
-/* =========================================================
-   7. 產品頁 (Products Page)
-   ========================================================= */
-.product-img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 16px 16px 0 0;
-}
-
-/* =========================================================
-   8. 響應式調整 (Responsive Overrides)
-   ========================================================= */
-@media (max-width: 768px) {
-    .bg-hero {
-        padding-top: 2rem;
-        min-height: 35vh;
-    }
-
-    .bakery-badge {
-        font-size: 0.95rem;
-    }
-
-    .product-img {
-        height: 160px;
-    }
+/* 減少動態偏好：關閉進場動畫 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
 }
