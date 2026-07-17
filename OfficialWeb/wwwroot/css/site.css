@@ -694,6 +694,22 @@ button { cursor: pointer; }
 .detail-title { font-weight: 500; font-size: 44px; line-height: 1.18; margin: 0; color: var(--fg); }
 .detail-blurb { font-size: 16px; line-height: 1.9; color: var(--muted); margin: 18px 0 0; }
 
+/* 取貨方式徽章（可宅配／可店取，依 Excel 勾選顯示） */
+.detail-fulfills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.detail-fulfill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--accent-soft);
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fg);
+}
+.detail-fulfill svg { color: var(--accent); flex-shrink: 0; }
+
 .detail-section { margin-top: 34px; }
 
 .detail-sec-label {
