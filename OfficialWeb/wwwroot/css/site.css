@@ -1006,6 +1006,17 @@ button { cursor: pointer; }
 .admin-table { margin-bottom: 0; }
 .admin-table th { font-size: 13px; color: var(--muted); font-weight: 500; }
 .admin-table td { font-size: 14px; }
+.admin-table .admin-col-sort { width: 64px; }
+
+/* Detail 主檔「取貨方式」checkbox 群組：高度對齊同列 .form-control、垂直置中 */
+.admin-check-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: calc(1.5em + 0.75rem + 2px);
+}
+.admin-check-group .form-check { margin-bottom: 0; }
+.admin-check-group .form-check-label { white-space: nowrap; }
 
 .admin-login-card {
   max-width: 380px;
