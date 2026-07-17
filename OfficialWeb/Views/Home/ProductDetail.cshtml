@@ -43,6 +43,27 @@
                     <p class="detail-blurb">@Model.Main.Description</p>
                 }
 
+                @* 取貨方式徽章：依 Excel 主檔「可宅配／可店取」勾選狀態顯示，未勾選則整列隱藏 *@
+                @if (Model.Main.CanDeliver || Model.Main.CanPickup)
+                {
+                    <div class="detail-fulfills">
+                        @if (Model.Main.CanDeliver)
+                        {
+                            <span class="detail-fulfill">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="15" height="12" rx="1" /><path d="M16 9h3l4 4v3h-7" /><circle cx="6" cy="18.5" r="2" /><circle cx="18" cy="18.5" r="2" /></svg>
+                                可宅配
+                            </span>
+                        }
+                        @if (Model.Main.CanPickup)
+                        {
+                            <span class="detail-fulfill">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16l1.5 5h-19z" /><path d="M5 9v11h14V9" /><path d="M9.5 20v-6h5v6" /></svg>
+                                可店取
+                            </span>
+                        }
+                    </div>
+                }
+
                 @if (Model.Sizes.Count > 0)
                 {
                     <div class="detail-section">
