@@ -30,6 +30,7 @@
                 Name: document.getElementById('createName').value.trim(),
                 Category: document.getElementById('createCategory').value.trim(),
                 Tag: document.getElementById('createTag').value.trim(),
+                Sort: document.getElementById('createSort').value.trim(), // 空字串 → 後端繫結為 null（自動排最後）
                 CanDeliver: document.getElementById('createDeliver').checked,
                 CanPickup: document.getElementById('createPickup').checked,
             }).then(function (res) {

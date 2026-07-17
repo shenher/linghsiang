@@ -20,6 +20,7 @@ namespace OfficialWeb.Services
 
         /// <summary>
         /// 新增產品主檔（產品編號取最大值 +1），回傳新編號。
+        /// product.Sort 大於 0 時採用指定排序，否則自動排在最後（既有最大排序 +1）。
         /// 同時寫入 8 列預設營養標示（熱量/蛋白質/脂肪/飽和脂肪/反式脂肪/碳水化合物/糖/鈉，數值 0）。
         /// </summary>
         int Create(ProductMain product);
@@ -27,7 +28,7 @@ namespace OfficialWeb.Services
         /// <summary>刪除產品：主檔 + 四張子表該產品所有列。回傳是否有刪到主檔。</summary>
         bool Delete(int id);
 
-        /// <summary>整批儲存單一產品：覆寫主檔基本欄位與營養份量欄位 + 重建四張子表該產品資料。</summary>
+        /// <summary>整批儲存單一產品：覆寫主檔基本欄位（含排序）與營養份量欄位 + 重建四張子表該產品資料。</summary>
         bool SaveDetail(ProductDetailData data);
     }
 
@@ -166,7 +167,9 @@ namespace OfficialWeb.Services
                 var ws = wb.Worksheet(ProductsSheet);
                 var existing = ReadProducts(ws);
                 var newId = existing.Count == 0 ? 1 : existing.Max(p => p.Id) + 1;
-                var newSort = existing.Count == 0 ? 1 : existing.Max(p => p.Sort) + 1;
+                var newSort = product.Sort > 0
+                    ? product.Sort
+                    : existing.Count == 0 ? 1 : existing.Max(p => p.Sort) + 1;
 
                 var row = ws.Row(LastDataRow(ws) + 1);
                 WriteProductRow(row, new ProductMain
@@ -227,9 +230,7 @@ namespace OfficialWeb.Services
                 var mainRow = DataRows(ws).FirstOrDefault(r => CellInt(r, 1) == data.Main.Id);
                 if (mainRow is null) return false;
 
-                // 主檔：保留既有排序，覆寫其餘欄位
-                var keepSort = CellInt(mainRow, 11) ?? 0;
-                data.Main.Sort = keepSort;
+                // 主檔：整列覆寫（排序由 Detail 畫面維護，一併寫回）
                 WriteProductRow(mainRow, data.Main);
 
                 // 子表：先刪該產品所有列，再依畫面資料重建

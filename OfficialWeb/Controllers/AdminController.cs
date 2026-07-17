@@ -159,6 +159,7 @@ namespace OfficialWeb.Controllers
                 Tag = string.IsNullOrWhiteSpace(vm.Tag) ? null : vm.Tag.Trim(),
                 CanDeliver = vm.CanDeliver,
                 CanPickup = vm.CanPickup,
+                Sort = vm.Sort ?? 0,
             });
             return Json(new { ok = true, id });
         }
@@ -195,6 +196,7 @@ namespace OfficialWeb.Controllers
                 Tag = data.Main.Tag,
                 CanDeliver = data.Main.CanDeliver,
                 CanPickup = data.Main.CanPickup,
+                Sort = data.Main.Sort,
                 Description = data.Main.Description,
                 AllergenNote = data.Main.AllergenNote,
                 ServingGrams = data.Main.ServingGrams,
@@ -243,6 +245,7 @@ namespace OfficialWeb.Controllers
                     Tag = string.IsNullOrWhiteSpace(vm.Tag) ? null : vm.Tag.Trim(),
                     CanDeliver = vm.CanDeliver,
                     CanPickup = vm.CanPickup,
+                    Sort = vm.Sort ?? 0,
                     Description = string.IsNullOrWhiteSpace(vm.Description) ? null : vm.Description.Trim(),
                     AllergenNote = string.IsNullOrWhiteSpace(vm.AllergenNote) ? null : vm.AllergenNote.Trim(),
                     ServingGrams = vm.ServingGrams,

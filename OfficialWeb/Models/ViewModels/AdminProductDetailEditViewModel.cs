@@ -28,6 +28,12 @@ namespace OfficialWeb.Models.ViewModels
         [Display(Name = "可店取")]
         public bool CanPickup { get; set; }
 
+        /// <summary>顯示排序（後台列表與前台菜單皆升冪）。</summary>
+        [Required(ErrorMessage = "請輸入排序")]
+        [Range(0, 100000, ErrorMessage = "排序須為 0–100000 的整數")]
+        [Display(Name = "排序")]
+        public int? Sort { get; set; }
+
         // ── 詳細頁文案 ──
         [Display(Name = "產品描述")]
         public string? Description { get; set; }

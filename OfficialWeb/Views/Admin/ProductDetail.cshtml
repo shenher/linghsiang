@@ -20,30 +20,39 @@
     <div class="admin-panel">
         <h2 class="admin-h2">主檔基本欄位</h2>
         <div class="row g-3">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label asp-for="Name" class="form-label">產品名 <span class="text-danger">*</span></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger small"></span>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label asp-for="Category" class="form-label">產品類別 <span class="text-danger">*</span></label>
                 <input asp-for="Category" class="form-control" />
                 <span asp-validation-for="Category" class="text-danger small"></span>
                 <div class="form-text">改了類別，前台分類 tab 會跟著變動。</div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label asp-for="Tag" class="form-label">產品標籤</label>
-                <input asp-for="Tag" class="form-control" placeholder="招牌 / 季節 / 熱賣（可空）" />
+                <input asp-for="Tag" class="form-control" placeholder="招牌 / 季節（可空）" />
                 <span asp-validation-for="Tag" class="text-danger small"></span>
             </div>
-            <div class="col-md-2 d-flex align-items-end gap-3 pb-1">
-                <div class="form-check">
-                    <input asp-for="CanDeliver" class="form-check-input" />
-                    <label asp-for="CanDeliver" class="form-check-label">可宅配</label>
-                </div>
-                <div class="form-check">
-                    <input asp-for="CanPickup" class="form-check-input" />
-                    <label asp-for="CanPickup" class="form-check-label">可店取</label>
+            <div class="col-md-2">
+                <label asp-for="Sort" class="form-label">排序 <span class="text-danger">*</span></label>
+                <input asp-for="Sort" class="form-control" type="number" min="0" step="1" />
+                <span asp-validation-for="Sort" class="text-danger small"></span>
+                <div class="form-text">數字小的排前面。</div>
+            </div>
+            <div class="col-md-3">
+                <span class="form-label d-block">取貨方式</span>
+                <div class="admin-check-group">
+                    <div class="form-check">
+                        <input asp-for="CanDeliver" class="form-check-input" />
+                        <label asp-for="CanDeliver" class="form-check-label">可宅配</label>
+                    </div>
+                    <div class="form-check">
+                        <input asp-for="CanPickup" class="form-check-input" />
+                        <label asp-for="CanPickup" class="form-check-label">可店取</label>
+                    </div>
                 </div>
             </div>
         </div>

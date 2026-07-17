@@ -24,5 +24,10 @@ namespace OfficialWeb.Models.ViewModels
 
         [Display(Name = "可店取")]
         public bool CanPickup { get; set; }
+
+        /// <summary>顯示排序（升冪）；留空 = 自動排在最後（既有最大排序 +1）。</summary>
+        [Range(1, 100000, ErrorMessage = "排序須為 1–100000 的整數")]
+        [Display(Name = "排序")]
+        public int? Sort { get; set; }
     }
 }
