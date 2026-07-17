@@ -110,7 +110,7 @@
                 @if (Model.Nutrition.Count > 0 && nutritionFilled)
                 {
                     <div class="detail-section">
-                        <div class="detail-sec-label">營養標示</div>
+                        <div class="detail-sec-label">營養標示(最小尺寸)</div>
                         <div class="nutrition-table">
                             <div class="nutrition-serving">
                                 <div class="nrow"><span>每一份量</span><span class="val">@(Model.Main.ServingGrams is null ? "—" : $"{Model.Main.ServingGrams.Value:0.#####} 公克")</span></div>
