@@ -42,7 +42,7 @@ There are no automated tests in this project.
 
 - **Framework**: ASP.NET Core 8 MVC, .NET SDK 8.0.300 (`OfficialWeb/global.json`)；NuGet：ClosedXML 0.105（MIT，讀寫 .xlsx）
 - **Controllers**:
-  - `HomeController` — 前台全 GET：`Index`（全屏 Hero）、`About`（理念/地圖/聯絡）、`Products`（讀 Excel 組 `ProductsPageViewModel`，分類 tab 由前端 JS 過濾）、`ProductDetail(int id)`（查無 404）、`Order`；`Contact` 301 轉址到 `About`（保留舊連結）
+  - `HomeController` — 前台全 GET：`Index`（全屏 Hero）、`About`（理念/地圖/聯絡）、`Products`（讀 Excel 組 `ProductsPageViewModel`，分類 tab 由前端 JS 過濾）、`ProductDetail(int id)`（查無 404；依 `ProductMain.CanDeliver`/`CanPickup` 顯示可宅配／可店取徽章，兩者皆未勾選時整列隱藏）、`Order`；`Contact` 301 轉址到 `About`（保留舊連結）
   - `PicController` — 圖片一律走後端 GET：`Hero`（`Pic/home/hero.*`，no-cache 換圖即生效）、`About`（`Pic/about/about.*`，無檔 404 前端佔位圖）、`Logo(name)`（白名單 mark/h-gold/h-white/v-gold）、`Product(id)`（無檔 404，前端顯示佔位圖）、`LineQr`；路徑全由白名單/數字 id 組成，不接受任意檔名
   - `AdminController` — `[Authorize]`（Cookie 驗證，登入路徑 `/Admin/Login`）：`Login`/`Logout`、`HomeImage`（首頁＆關於圖片維護）+`UploadHomeImage`/`UploadAboutImage`（副檔名白名單 jpg/png/webp、5MB 上限）、`Products`（主檔列表，含排序欄、依排序升冪）、`CreateProduct`/`DeleteProduct`（Modal AJAX，JSON 回應；新增可指定排序、留空自動排最後；刪除連同四張子表＋產品圖檔）、`ProductDetail(id)`/`SaveProductDetail`（主檔基本欄位（含排序）＋動態子表列＋圖片上傳整批儲存）
 - **Services**:

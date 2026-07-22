@@ -23,7 +23,7 @@
 
 **拎香培室** 官網提供以下功能：
 
-- 前台五頁：首頁（全屏 Hero）、關於（理念/地圖/聯絡）、產品（分類 tab）、產品詳細（尺寸價格/成分/營養標示/備註）、下單導引（LINE QRCode）
+- 前台五頁：首頁（全屏 Hero）、關於（理念/地圖/聯絡）、產品（分類 tab）、產品詳細（取貨方式徽章/尺寸價格/成分/營養標示/備註）、下單導引（LINE QRCode）
 - `/Admin` 主檔維護後台：Cookie 密碼登入，維護首頁＆關於圖片、產品主檔（新增/刪除/編輯明細）
 
 本網站**不連接資料庫**：產品資料由 `Menu.xlsx`（ClosedXML 讀寫）驅動，圖片實體檔集中在 `Pic/` 並一律經由後端 `PicController` 提供。正式環境（Docker）以 `DataRoot` 環境變數將站台資料（`Menu.xlsx`、`Pic/`）與 git 管理的程式碼分離，詳見 [`dockerPublish.md`](dockerPublish.md)。
@@ -212,7 +212,7 @@ dotnet run
 | `/` | 首頁 | 全屏 Hero、進場動畫、LINE CTA |
 | `/Home/About` | 關於 | 開店理念＋統計、Google 地圖與營業時間、聯絡方式卡片（`/Home/Contact` 301 轉址於此，保留舊連結） |
 | `/Home/Products` | 產品 | 動態分類 tab（全部＋Excel 類別）、產品卡片格線，前端 JS 過濾 |
-| `/Home/ProductDetail/{id}` | 產品詳細 | 尺寸價格選項、成分標籤、台灣格式營養標示表、備註、LINE CTA；查無資料回 404 |
+| `/Home/ProductDetail/{id}` | 產品詳細 | 可宅配／可店取徽章（依主檔勾選顯示、皆未勾選則隱藏）、尺寸價格選項、成分標籤、台灣格式營養標示表、備註、LINE CTA；查無資料回 404 |
 | `/Home/Order` | 下單 | 四步驟流程卡、LINE QRCode 主卡、IG/FB 其他管道 |
 
 ### 後台
@@ -221,8 +221,8 @@ dotnet run
 |---|---|---|
 | `/Admin/Login` | 登入 | Cookie 密碼驗證 |
 | `/Admin/HomeImage` | 首頁＆關於圖片維護 | 上傳首頁 Hero、關於頁圖片 |
-| `/Admin/Products` | 產品主檔列表 | Modal AJAX 新增／刪除產品 |
-| `/Admin/ProductDetail/{id}` | 產品明細編輯 | 主檔基本欄位＋動態子表列（尺寸/成分/營養/備註）＋圖片上傳整批儲存 |
+| `/Admin/Products` | 產品主檔列表 | 依排序欄位升冪顯示；Modal AJAX 新增／刪除產品（新增可指定排序，留空自動排最後） |
+| `/Admin/ProductDetail/{id}` | 產品明細編輯 | 主檔基本欄位（含排序）＋動態子表列（尺寸/成分/營養/備註）＋圖片上傳整批儲存 |
 
 ---
 
