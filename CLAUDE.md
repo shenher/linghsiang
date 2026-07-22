@@ -8,26 +8,7 @@ LING HSIANG BAKERY（拎香焙室）— 全素接單烘焙品牌官網 + 菜單�
 
 ## Commands
 
-All commands run from the repo root. The solution and project files are under `OfficialWeb/`.
-
-```bash
-# Restore dependencies
-dotnet restore OfficialWeb/OfficialWeb.csproj
-
-# Build
-dotnet build OfficialWeb/OfficialWeb.csproj
-
-# Run (HTTP, development)
-dotnet run --project OfficialWeb/OfficialWeb.csproj --urls="http://localhost:5227"
-
-# Run (HTTPS, development)
-dotnet run --project OfficialWeb/OfficialWeb.csproj --urls="https://localhost:7097"
-
-# Docker (production)
-docker-compose up --build
-```
-
-There are no automated tests in this project.
+Solution/project under `OfficialWeb/` — build/run with the standard `dotnet` CLI; `docker-compose up --build` for the container. Dev URLs: `http://localhost:5227` (HTTP) / `https://localhost:7097` (HTTPS). There are no automated tests in this project.
 
 ## 設計稿讀取規範（context 保護，全程遵守）
 
@@ -50,7 +31,6 @@ There are no automated tests in this project.
   - `Services/MenuExcelService.cs` — `IMenuService`（DI Singleton，內部 lock 序列化寫入）：`EnsureSeeded`（啟動時 `Menu.xlsx`/`Pic/` 缺件自動重建，Seed 為設計稿 18 筆菜單；DataRoot 與程式目錄分離時另將內建種子圖片補進資料目錄，只補缺不覆蓋）、`GetAll`、`GetCategories`、`GetById`、`Create`（Sort > 0 時採用指定排序、否則自動排最後；同時寫入 8 列預設營養標示，數值 0：熱量/蛋白質/脂肪/飽和脂肪/反式脂肪/碳水化合物/糖/鈉）、`Delete`、`SaveDetail`（含主檔排序一併寫回）。後台 Detail GET 對無營養列的舊資料 fallback 帶入同一組預設列；前台詳細頁在份量未設且營養數值全 0 時隱藏整張營養標示表（視為尚未填寫）
   - `Tools/EmailService.cs` — `IEmailService` generic SMTP utility；registered in DI but not injected anywhere
 - **Menu.xlsx（5 個工作表，中文欄名）**: `Products`（產品編號/名稱/類別/標籤/可宅配/可店取/描述/過敏原/每一份量克數/本包裝含份數/排序）、`Sizes`、`Ingredients`、`Nutrition`、`Notes`（子表皆以產品編號關聯）。產品類別為自由文字，前台 tab 依不重複值動態產生＋寫死「全部」
-- **Models**: `Models/Menu/`（ProductMain、SizePrice、Ingredient、NutritionRow、ProductNote、ProductDetailData）、`Models/ViewModels/`（強型別 + DataAnnotations）、`Models/Settings/`（SiteSettings、AdminSettings）
 - **Views**: `Views/Home/`（前台五頁）、`Views/Admin/`（Login/HomeImage/Products/ProductDetail）、`Views/Shared/_Layout.cshtml`（雙型態導覽列：首頁 light 透明白字（`ViewData["NavVariant"]="light"`）/ 內頁 solid sticky；新頁尾）、`_AdminLayout.cshtml`（後台版面，含 AJAX 防偽 token 來源 `#af-token`）
 - **Static assets**: `wwwroot/css/site.css`（主題變數＋分區註解：基礎/導覽/頁尾/共用元件/各頁/後台；RWD 斷點 760px）；`wwwroot/js/` — `home.js`（進場動畫）、`products.js`（分類 tab 前端過濾）、`admin-products.js`（新增/刪除 Modal + AJAX，token 放 `RequestVerificationToken` header）、`admin-product-detail.js`（動態列增刪＋索引重排）；`wwwroot/lib/` local Bootstrap 5.3.2 / jQuery / jquery-validation（layout 引用本地 Bootstrap）
 
