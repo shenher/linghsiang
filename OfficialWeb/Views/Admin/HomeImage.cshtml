@@ -1,0 +1,45 @@
+@model HomeImageViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "首頁＆關於圖片維護";
+}
+
+<h1 class="admin-h1">首頁＆關於圖片維護</h1>
+<p class="admin-sub">上傳新圖後立即取代前台顯示（jpg / png / webp，5MB 以內）。</p>
+
+@* ── 首頁 Hero 背景 ── *@
+<div class="admin-panel">
+    <h2 class="admin-h2">首頁 Hero 背景</h2>
+    <div class="admin-hero-preview">
+        <img src="/Pic/Hero?t=@DateTime.Now.Ticks" alt="目前首頁背景"
+             onerror="this.replaceWith(Object.assign(document.createElement('div'), { className: 'admin-hero-missing', textContent: '目前沒有首頁圖片（前台將無 Hero 背景）' }));" />
+    </div>
+
+    <form asp-controller="Admin" asp-action="UploadHomeImage" method="post" enctype="multipart/form-data" class="admin-upload-form">
+        <div class="mb-3">
+            <label asp-for="HeroImage" class="form-label"></label>
+            <input asp-for="HeroImage" type="file" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+            <span asp-validation-for="HeroImage" class="text-danger small"></span>
+        </div>
+        <button type="submit" class="btn-accent">上傳取代</button>
+    </form>
+</div>
+
+@* ── 關於頁圖片（右側 4:5 直式圖） ── *@
+<div class="admin-panel">
+    <h2 class="admin-h2">關於頁圖片</h2>
+    <p class="admin-sub mb-3">顯示在「關於」頁開店理念右側，建議 4:5 直式照片（如工作檯、烘焙過程）。</p>
+    <div class="admin-hero-preview">
+        <img src="/Pic/About?t=@DateTime.Now.Ticks" alt="目前關於頁圖片"
+             onerror="this.replaceWith(Object.assign(document.createElement('div'), { className: 'admin-hero-missing', textContent: '目前沒有關於頁圖片（前台顯示佔位圖）' }));" />
+    </div>
+
+    <form asp-controller="Admin" asp-action="UploadAboutImage" method="post" enctype="multipart/form-data" class="admin-upload-form">
+        <div class="mb-3">
+            <label asp-for="AboutImage" class="form-label"></label>
+            <input asp-for="AboutImage" type="file" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+            <span asp-validation-for="AboutImage" class="text-danger small"></span>
+        </div>
+        <button type="submit" class="btn-accent">上傳取代</button>
+    </form>
+</div>

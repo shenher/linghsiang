@@ -1,0 +1,118 @@
+@model AdminProductListViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "產品維護";
+}
+
+<div class="admin-head-row">
+    <div>
+        <h1 class="admin-h1">產品維護</h1>
+        <p class="admin-sub">主檔列表（資料來源 Menu.xlsx）；編輯尺寸、成分、營養標示請進「編輯 Detail」。</p>
+    </div>
+    <button type="button" class="btn-accent" data-bs-toggle="modal" data-bs-target="#createModal">＋ 新增產品</button>
+</div>
+
+<div class="admin-panel">
+    <table class="table align-middle admin-table">
+        <thead>
+            <tr>
+                <th class="text-center admin-col-sort">排序</th>
+                <th>產品名</th>
+                <th>產品類別</th>
+                <th>產品標籤</th>
+                <th class="text-center">可宅配</th>
+                <th class="text-center">可店取</th>
+                <th class="text-end">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var p in Model.Products)
+        {
+            <tr>
+                <td class="text-center">@p.Sort</td>
+                <td>@p.Name</td>
+                <td>@p.Category</td>
+                <td>@(string.IsNullOrEmpty(p.Tag) ? "—" : p.Tag)</td>
+                <td class="text-center">@(p.CanDeliver ? "✓" : "—")</td>
+                <td class="text-center">@(p.CanPickup ? "✓" : "—")</td>
+                <td class="text-end">
+                    <a class="btn btn-sm btn-outline-secondary" asp-controller="Admin" asp-action="ProductDetail" asp-route-id="@p.Id">編輯 Detail</a>
+                    <button type="button" class="btn btn-sm btn-outline-danger js-delete" data-id="@p.Id" data-name="@p.Name">刪除</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    @if (Model.Products.Count == 0)
+    {
+        <p class="text-muted mb-0">目前沒有產品，請點「新增產品」。</p>
+    }
+</div>
+
+@* 新增產品 Modal *@
+<div class="modal fade" id="createModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">新增產品</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger d-none" id="createError"></div>
+                <div class="mb-3">
+                    <label class="form-label" for="createName">產品名 <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="createName" maxlength="100" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="createCategory">產品類別 <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="createCategory" maxlength="50" placeholder="例：蛋糕、餅乾、塔類" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="createTag">產品標籤</label>
+                    <input type="text" class="form-control" id="createTag" maxlength="20" placeholder="例：招牌、季節、熱賣（可空）" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="createSort">排序</label>
+                    <input type="number" class="form-control" id="createSort" min="1" step="1" placeholder="留空＝自動排在最後" />
+                    <div class="form-text">數字小的排前面（後台列表與前台菜單皆升冪顯示）。</div>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="createDeliver" />
+                    <label class="form-check-label" for="createDeliver">可宅配</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="createPickup" checked />
+                    <label class="form-check-label" for="createPickup">可店取</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn-accent" id="createSubmit">新增</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* 刪除確認 Modal *@
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">刪除產品</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button>
+            </div>
+            <div class="modal-body">
+                <p>確定要刪除「<strong id="deleteName"></strong>」嗎？</p>
+                <p class="text-danger mb-0"><strong>將連同 Detail 資料（尺寸價格、成分、營養標示、備註、產品圖片）一併刪除，無法復原。</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-danger" id="deleteConfirm">確認刪除</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-products.js" asp-append-version="true"></script>
+}
